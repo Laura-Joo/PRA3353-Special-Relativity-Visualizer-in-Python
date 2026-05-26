@@ -1,4 +1,8 @@
 """
+
+THIS FILE IS EVIL AND AI GENERATED, DONT USE IT IN THE END PROJECT
+
+
 Nats super awesome Minkowski diagram in shifter.
 
 mac run instructions:
