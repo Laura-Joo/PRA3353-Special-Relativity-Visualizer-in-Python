@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relativistic Reference Frames</title>
+</head>
+<body>
+
+  <h1>Reference frames in flat spacetime</h1>
+  <p>Scaffold for an interactive Minkowski diagram.</p>
+
+  <h2>Controls</h2>
+
+  <button id="btn-frame-a">Rest frame A</button>
+  <button id="btn-frame-b">Rest frame B</button>
+  <button id="btn-frame-lab">Lab frame</button>
+
+  <p>
+    <label for="beta-slider">Boost parameter &beta;:</label>
+    <input type="range" id="beta-slider" min="-0.95" max="0.95" step="0.01" value="0">
+    <span id="beta-display">0.00</span> c
+  </p>
+
+  <h2>Info</h2>
+  <p id="info">&beta; = 0.00 &mdash; sample text placeholder.</p>
+
+  <script>
+    const slider  = document.getElementById('beta-slider');
+    const display = document.getElementById('beta-display');
+    const info    = document.getElementById('info');
+    const btnA    = document.getElementById('btn-frame-a');
+    const btnB    = document.getElementById('btn-frame-b');
+    const btnLab  = document.getElementById('btn-frame-lab');
+
+    slider.addEventListener('input', () => {
+      const beta = parseFloat(slider.value);
+      display.textContent = beta.toFixed(2);
+      info.textContent = `β = ${beta.toFixed(2)} — sample text placeholder.`;
+    });
+
+    btnA.addEventListener('click', () => {
+      console.log('Frame A selected');
+    });
+
+    btnB.addEventListener('click', () => {
+      console.log('Frame B selected');
+    });
+
+    btnLab.addEventListener('click', () => {
+      slider.value = 0;
+      slider.dispatchEvent(new Event('input'));
+    });
+  </script>
+
+</body>
+</html>
