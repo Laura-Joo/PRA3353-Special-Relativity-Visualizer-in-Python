@@ -1,0 +1,25 @@
+body {
+
+    font-family: Arial, sans-serif;
+
+    margin: 20px;
+
+    background-color: #65befac2;
+
+}
+
+h1 {
+
+    color: rgb(22, 45, 147);
+}
+
+
+button {
+
+    padding: 10px;
+    background-color: #3560d3;
+    color: black;
+    margin: 5px;
+    box-shadow: #2349c5;
+    border-color: #000000;
+}
