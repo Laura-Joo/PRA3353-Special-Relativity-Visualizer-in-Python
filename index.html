@@ -1,5 +1,8 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
+  <title> 
+  First Example of htlm file to learn with (27/05/2026)
+  </title>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,18 +14,52 @@
   <p>Scaffold for an interactive Minkowski diagram.</p>
 
   <h2>Controls</h2>
-
+  <!--Here, I'll code the buttons and controls we want to give the user the possibility to interact with the diagram-->
+  
+  <h3>Change reference frame</h3>
   <button id="btn-frame-a">Rest frame A</button>
   <button id="btn-frame-b">Rest frame B</button>
   <button id="btn-frame-lab">Lab frame</button>
 
-  <p>
-    <label for="beta-slider">Boost parameter &beta;:</label>
-    <input type="range" id="beta-slider" min="-0.95" max="0.95" step="0.01" value="0">
-    <span id="beta-display">0.00</span> c
+    <p>
+    <label for="beta-A-slider"> Change velocity of A frame relative to Lab frame (=boost parameter &beta;-A):</label>
+    <input type="range" id="beta-A-slider" min="0.00" max="0.95" step="0.01" value="0">
+    <span id="beta-A-display">0.00</span> c
   </p>
 
-  <h2>Info</h2>
+    <p>
+    <label for="beta-B-slider"> Change velocity of B frame relative to Lab frame (=boost parameter &beta;-B):</label>
+    <input type="range" id="beta-B-slider" min="0.00" max="0.95" step="0.01" value="0">
+    <span id="beta-B-display">0.00</span> c
+  </p>
+
+  <h3>Add elements</h3>
+    <button id="btn-worldlines">Add worldlines</button>
+    <br>
+    <br>
+    <button id="btn-events">Add events</button>
+    <br>
+    <br>
+    <button id="btn-lightcone">Add lightcones to events</button>
+    <br>
+    <br>
+    <button id="btn-simultaneity">Add simultaneity lines to events</button>
+    <br>
+    <br>
+
+  <h3>Drop down menus</h3>
+
+  <h3>Explanations of Paradoxes</h3>
+  <p> Learn more about famous paradoxes
+  </p> <!-- Having all be links to other webpages?-->
+  <ul>
+    <li>Time Dilation</li>
+    <li>Length Contraction</li>
+    <li>Loss of Simultaneity & Place</li>
+    <li>Twin Paradox</li>
+  </ul>
+
+  <h2>Info</h2> <!--What is the point of this section?-->
   <p id="info">&beta; = 0.00 &mdash; sample text placeholder.</p>
 
   <script>
@@ -32,8 +69,12 @@
     const btnA    = document.getElementById('btn-frame-a');
     const btnB    = document.getElementById('btn-frame-b');
     const btnLab  = document.getElementById('btn-frame-lab');
+    const btnWorldlines = document.getElementById('btn-worldlines');
+    const btnEvents = document.getElementById('btn-events');
+    const btnLightcone = document.getElementById('btn-lightcone');
+    const btnSim = document.getElementById('btn-simultaneity');
 
-    slider.addEventListener('input', () => {
+      slider.addEventListener('input', () => {
       const beta = parseFloat(slider.value);
       display.textContent = beta.toFixed(2);
       info.textContent = `β = ${beta.toFixed(2)} — sample text placeholder.`;
@@ -52,6 +93,58 @@
       slider.dispatchEvent(new Event('input'));
     });
   </script>
+<br>
+
+<!--
+<h2>Examples of htlm use</h2>
+Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore, similique aliquid placeat voluptatibus voluptates quam quaerat aspernatur autem modi voluptate officiis minus, numquam odit eligendi totam nostrum quisquam enim. Tenetur!
+  <p>Unordered list example</p>
+  <ul>
+    <li>list item</li>
+    <li>list item</li>
+    <li>list item</li>
+  </ul>
+
+  <p>Ordered list example</p>
+  <ol>
+    <li>to do first</li>
+    <li>to do then</li>
+    <li>to do at the end</li>
+  </ol>
+
+  <p>Text inputs by users</p>
+  <input type="text" placeholder="Enter your text here">-->
+  <!--Could be used for users to enter the frame/event/etc they want to see.-->
+  <br>
+  <br>
+
+  <!--<p>Number inputs by users</p>
+  <input type="number" placeholder="Enter a number">
+  <!--The input tag is a self-closing tag so it doesn't have content and doesn't need a closing tag.-->
+  <!--Could be used for users to enter the frame/event/etc they want to see.-->
+  <br>
+  <br>
+
+  <!--<a href="https://youtube.com" target="_blank">Link to YouTube</a>
+  <!--By default, links open in the same tab so users will leave this one to go to the linked one.
+  With target _blank then it'll open in a new tab.-->
+  <br>
+  <!--<a href="login page.htlm" target="_blank">Link to Login page</a>
+  <br>
+  <br>
+  <audio controls> <source
+    src="Dekham - Hermetico.mp3"
+    type="audio/mpeg">
+  Your browser does not support the audio element.
+  </audio>
+  <br>
+  <br>
+
+  <img src="image example.png" alt="trying to insert an image"
+  width="200" height="200" title="Special relativity">
+  <!--Attributes are src and alt here and their value are the things in quotation marks.
+  Alt is the image description that will be shown if image doesn't load.
+  Title is what will appear if the mouse hovers over the image.-->
 
 </body>
 </html>
