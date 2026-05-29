@@ -47,7 +47,130 @@
     <br>
     <br>
 
-  <h3>Drop down menus</h3>
+  <h3>Dropdown menus</h3>
+
+  <style>
+.dropbtn {
+  background-color: #4a7bad;
+  color: white;
+  padding: 10px;
+  font-size: 12px;
+  border: none;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: rgb(0, 0, 0);
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.sentence {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dropdown-content a:hover {background-color: #ddd;}
+
+.dropdown:hover .dropdown-content {display: block;}
+
+.dropdown:hover .dropbtn {background-color: #4a7bad;}
+</style>
+</head>
+<body style="background-color:white;">
+
+<div class="sentence">
+<div class="dropdown">
+  <button class="dropbtn">- - -</button>
+  <div class="dropdown-content">
+    <p>Where</p>
+    <p>When</p>
+  </div>
+</div>
+
+<p>does event</p>
+
+<div class="dropdown">
+  <button class="dropbtn">- - -</button>
+  <div class="dropdown-content">
+    <p>C</p>
+    <p>D</p> <!--Here we should give the possibility for the user to select events that they might've added previsouly.-->
+  </div>
+</div>
+
+<p>happens for</p>
+
+<div class="dropdown">
+  <button class="dropbtn">- - -</button>
+  <div class="dropdown-content">
+    <p>Frame A.</p>
+    <p>Frame B.</p>
+    <p>Lab Frame.</p>
+  </div>
+</div>
+</div>
+
+<br>
+
+<div class="sentence">
+<div class="dropdown">
+  <button class="dropbtn">- - -</button>
+  <div class="dropdown-content">
+    <p>Where</p>
+    <p>When</p>
+  </div>
+</div>
+
+<p>does</p>
+
+<div class="dropdown">
+  <button class="dropbtn">- - -</button>
+  <div class="dropdown-content">
+    <p>Lab</p>
+    <p>A</p>
+    <p>B</p>
+  </div>
+</div>
+
+<p>says</p>
+
+<div class="dropdown">
+  <button class="dropbtn">- - -</button>
+  <div class="dropdown-content">
+    <p>Lab</p>
+    <p>A</p>
+    <p>B</p>
+  </div>
+</div>
+
+<p>saw the</p>
+
+<div class="dropdown">
+  <button class="dropbtn">- - -</button>
+  <div class="dropdown-content">
+    <p>C</p>
+    <p>D</p> <!--Here we should give the possibility for the user to select events that they might've added previsouly.-->
+  </div>
+</div>
+
+<p>event.</p>
+
+</div>
 
   <h3>Explanations of Paradoxes</h3>
   <p> Learn more about famous paradoxes
@@ -63,8 +186,10 @@
   <p id="info">&beta; = 0.00 &mdash; sample text placeholder.</p>
 
   <script>
-    const slider  = document.getElementById('beta-slider');
-    const display = document.getElementById('beta-display');
+    const sliderA  = document.getElementById('beta-A-slider');
+    const sliderB  = document.getElementById('beta-B-slider');
+    const displayA = document.getElementById('beta-A-display');
+    const displayB = document.getElementById('beta-B-display');
     const info    = document.getElementById('info');
     const btnA    = document.getElementById('btn-frame-a');
     const btnB    = document.getElementById('btn-frame-b');
@@ -74,9 +199,15 @@
     const btnLightcone = document.getElementById('btn-lightcone');
     const btnSim = document.getElementById('btn-simultaneity');
 
-      slider.addEventListener('input', () => {
-      const beta = parseFloat(slider.value);
-      display.textContent = beta.toFixed(2);
+      sliderA.addEventListener('input', () => {
+      const beta = parseFloat(sliderA.value);
+      displayA.textContent = beta.toFixed(2);
+      info.textContent = `β = ${beta.toFixed(2)} — sample text placeholder.`;
+    });
+
+    sliderB.addEventListener('input', () => {
+      const beta = parseFloat(sliderB.value);
+      displayB.textContent = beta.toFixed(2);
       info.textContent = `β = ${beta.toFixed(2)} — sample text placeholder.`;
     });
 
@@ -89,8 +220,8 @@
     });
 
     btnLab.addEventListener('click', () => {
-      slider.value = 0;
-      slider.dispatchEvent(new Event('input'));
+      sliderA.value = 0;
+      sliderA.dispatchEvent(new Event('input'));
     });
   </script>
 <br>
