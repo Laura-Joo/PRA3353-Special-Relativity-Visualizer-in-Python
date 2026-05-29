@@ -46,139 +46,86 @@
     <button id="btn-simultaneity">Add simultaneity lines to events</button>
     <br>
     <br>
+    <button id="btn-clearall">Clear all elements</button> <!--Would make the graph appear like its initial version.-->
+    <br>
+    <br>
 
   <h3>Dropdown menus</h3>
 
   <style>
-.dropbtn {
-  background-color: #4a7bad;
-  color: white;
-  padding: 10px;
-  font-size: 12px;
-  border: none;
-}
-
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #f1f1f1;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
-}
-
-.dropdown-content a {
-  color: rgb(0, 0, 0);
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-}
-
 .sentence {
   display: flex;
   align-items: center;
   gap: 8px;
 }
-
-.dropdown-content a:hover {background-color: #ddd;}
-
-.dropdown:hover .dropdown-content {display: block;}
-
-.dropdown:hover .dropbtn {background-color: #4a7bad;}
 </style>
-</head>
-<body style="background-color:white;">
 
 <div class="sentence">
-<div class="dropdown">
-  <button class="dropbtn">- - -</button>
-  <div class="dropdown-content">
-    <p>Where</p>
-    <p>When</p>
-  </div>
-</div>
+<select>
+  <option>Where</option>
+  <option>When</option>
+</select>
 
 <p>does event</p>
 
-<div class="dropdown">
-  <button class="dropbtn">- - -</button>
-  <div class="dropdown-content">
-    <p>C</p>
-    <p>D</p> <!--Here we should give the possibility for the user to select events that they might've added previsouly.-->
-  </div>
-</div>
+<select>
+    <option>C</option>
+    <option>D</option> <!--Here we should give the possibility for the user to select events that they might've added previsouly.-->
+  </select>
 
 <p>happens for</p>
 
-<div class="dropdown">
-  <button class="dropbtn">- - -</button>
-  <div class="dropdown-content">
-    <p>Frame A.</p>
-    <p>Frame B.</p>
-    <p>Lab Frame.</p>
-  </div>
-</div>
-</div>
+<select>
+  <option>Frame A.</option>
+  <option>Frame B.</option>
+  <option>Lab Frame.</option>
+</select>
 
-<br>
+<button id="btn-compute1">Compute</button>
+</div>
 
 <div class="sentence">
-<div class="dropdown">
-  <button class="dropbtn">- - -</button>
-  <div class="dropdown-content">
-    <p>Where</p>
-    <p>When</p>
-  </div>
-</div>
+<select>
+  <option>Where</option>
+  <option>When</option>
+</select>
 
 <p>does</p>
 
-<div class="dropdown">
-  <button class="dropbtn">- - -</button>
-  <div class="dropdown-content">
-    <p>Lab</p>
-    <p>A</p>
-    <p>B</p>
-  </div>
-</div>
+<select>
+  <option>Lab</option>
+  <option>A</option>
+  <option>B</option>
+</select>
 
-<p>says</p>
+<p>observer says</p>
 
-<div class="dropdown">
-  <button class="dropbtn">- - -</button>
-  <div class="dropdown-content">
-    <p>Lab</p>
-    <p>A</p>
-    <p>B</p>
-  </div>
-</div>
+<select>
+    <option>Lab</option>
+    <option>A</option>
+    <option>B</option>
+</select>
 
 <p>saw the</p>
 
-<div class="dropdown">
-  <button class="dropbtn">- - -</button>
-  <div class="dropdown-content">
-    <p>C</p>
-    <p>D</p> <!--Here we should give the possibility for the user to select events that they might've added previsouly.-->
-  </div>
+<select>
+    <option>C</option>
+    <option>D</option> <!--Here we should give the possibility for the user to select events that they might've added previsouly.-->
+</select>
+
+<p>event happening.</p>
+
+<button id="btn-compute2">Compute</button>
 </div>
 
-<p>event.</p>
 
-</div>
-
-  <h3>Explanations of Paradoxes</h3>
-  <p> Learn more about famous paradoxes
-  </p> <!-- Having all be links to other webpages?-->
+  <h3>Step by step explanations of phenomena and paradoxes</h3>
+  <p> These explanations will help you build your intuition around relativistic concepts by guiding slowly through the steps while visualizing at the same time on the space-time diagram.</p> <!-- Having all be links to other webpages? YES in the process.-->
   <ul>
-    <li>Time Dilation</li>
+    <li>Loss of Place</li>
+    <li>Loss of Simultaneity</li>
+    <li>Time Dilation</li> <a href="https://youtube.com" target="_blank">Link to YouTube</a>
     <li>Length Contraction</li>
-    <li>Loss of Simultaneity & Place</li>
     <li>Twin Paradox</li>
   </ul>
 
@@ -190,6 +137,9 @@
     const sliderB  = document.getElementById('beta-B-slider');
     const displayA = document.getElementById('beta-A-display');
     const displayB = document.getElementById('beta-B-display');
+    const compute1 = document.getElementById('btn-compute1');
+    const compute2 = document.getElementById('btn-compute2');
+    const clearAll = document.getElementById('btn-clearall');
     const info    = document.getElementById('info');
     const btnA    = document.getElementById('btn-frame-a');
     const btnB    = document.getElementById('btn-frame-b');
