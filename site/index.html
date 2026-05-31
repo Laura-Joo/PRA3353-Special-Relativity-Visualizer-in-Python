@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PyScript Test</title>
+  <link rel="stylesheet" href="https://pyscript.net/releases/2024.10.2/core.css">
+  <script type="module" src="https://pyscript.net/releases/2024.10.2/core.js"></script>
+  <py-config>
+    packages = ["numpy"]
+  </py-config>
+</head>
+<body>
+
+  <p>PyScript + NumPy + SVG — everything is working if you see the donut below.</p>
+
+  <p>
+    <button id="btn-start">Start</button>
+    <button id="btn-stop">Stop</button>
+    FPS: <span id="fps">—</span>
+  </p>
+
+  <svg id="donut"
+       width="420" height="420"
+       viewBox="-1 -1 2 2"
+       style="background:#111; display:block;">
+    <!-- Python writes <circle> elements here each frame -->
+  </svg>
+
+  <script type="py">
+    import numpy as np
+    from pyscript import document
+    from pyscript.ffi import create_proxy
+    import js
+
+    SVG_NS = "http://www.w3.org/2000/svg"
+    svg    = document.getElementById("donut")
+    fps_el = document.getElementById("fps")
+
+    # --- donut geometry ---
+    # torus params
+    R = 0.6       # distance from tube centre to torus centre
+    r = 0.25      # tube radius
+    LIGHT = np.array([0.0, 1.0, -1.0])
+    LIGHT = LIGHT / np.linalg.norm(LIGHT)
+
+    N_THETA = 60  # around tube
+    N_PHI   = 80  # around torus
+
+    theta = np.linspace(0, 2 * np.pi, N_THETA, endpoint=False)
+    phi   = np.linspace(0, 2 * np.pi, N_PHI,   endpoint=False)
+    THETA, PHI = np.meshgrid(theta, phi)          # (N_PHI, N_THETA)
+
+    # torus surface points (object space, lying in xz-plane)
+    SX = (R + r * np.cos(THETA)) * np.cos(PHI)   # (N_PHI, N_THETA)
+    SY =      r * np.sin(THETA)
+    SZ = (R + r * np.cos(THETA)) * np.sin(PHI)
+
+    # surface normals
+    NX = np.cos(THETA) * np.cos(PHI)
+    NY = np.sin(THETA)
+    NZ = np.cos(THETA) * np.sin(PHI)
+
+    flat_sx = SX.ravel()
+    flat_sy = SY.ravel()
+    flat_sz = SZ.ravel()
+    flat_nx = NX.ravel()
+    flat_ny = NY.ravel()
+    flat_nz = NZ.ravel()
+    N_DOTS  = len(flat_sx)
+
+    # --- state ---
+    state = {"A": 0.0, "B": 0.0, "running": False, "timer_id": None, "last_t": None}
+
+    PALETTE = [
+        "#0d0d0d","#1a1a2e","#16213e","#1f3a5f",
+        "#2e5f8a","#4a90c4","#7ab8e8","#aed6f1",
+        "#d6eaf8","#ebf5fb","#ffffff",
+    ]
+
+    def render_frame():
+        A, B = state["A"], state["B"]
+        ca, sa = np.cos(A), np.sin(A)
+        cb, sb = np.cos(B), np.sin(B)
+
+        # rotate points: first around x-axis by A, then y-axis by B
+        y1 =  flat_sy * ca - flat_sz * sa
+        z1 =  flat_sy * sa + flat_sz * ca
+        x2 =  flat_sx * cb + z1 * sb
+        z2 = -flat_sx * sb + z1 * cb
+
+        # rotate normals identically
+        ny1 = flat_ny * ca - flat_nz * sa
+        nz1 = flat_ny * sa + flat_nz * ca
+        nx2 = flat_nx * cb + nz1 * sb
+
+        # perspective projection (camera at z = -3)
+        D = 3.0
+        ooz  = 1.0 / (z2 + D)
+        px   = x2  * ooz          # projected x  (range ~ -0.4..0.4)
+        py   = -y1 * ooz          # projected y  (flip for screen)
+
+        # lighting: dot product of rotated normal with light dir
+        lum = nx2 * LIGHT[0] + ny1 * LIGHT[1] + nz1 * LIGHT[2]
+
+        # sort back-to-front by z2 (painter's algorithm)
+        order = np.argsort(z2)
+
+        # build SVG
+        svg.innerHTML = ""
+        DOT_R = 0.022
+
+        for i in order:
+            l = float(lum[i])
+            if l < 0.0:
+                l = 0.0
+            idx = int(l * (len(PALETTE) - 1))
+            color = PALETTE[min(idx, len(PALETTE) - 1)]
+
+            circle = document.createElementNS(SVG_NS, "circle")
+            circle.setAttribute("cx",   f"{float(px[i]):.4f}")
+            circle.setAttribute("cy",   f"{float(py[i]):.4f}")
+            circle.setAttribute("r",    str(DOT_R))
+            circle.setAttribute("fill", color)
+            svg.appendChild(circle)
+
+        state["A"] += 0.05
+        state["B"] += 0.03
+
+    # --- FPS tracking ---
+    def tick():
+        import js as _js
+        now = _js.Date.now()
+        if state["last_t"] is not None:
+            dt = (now - state["last_t"]) / 1000.0
+            if dt > 0:
+                fps_el.textContent = f"{1/dt:.0f}"
+        state["last_t"] = now
+        render_frame()
+
+    tick_proxy = create_proxy(tick)
+
+    def start(ev=None):
+        if state["running"]: return
+        state["running"] = True
+        state["last_t"]  = None
+
+        def loop(_):
+            if not state["running"]: return
+            tick_proxy()
+            state["timer_id"] = js.requestAnimationFrame(create_proxy(loop))
+
+        state["timer_id"] = js.requestAnimationFrame(create_proxy(loop))
+
+    def stop(ev=None):
+        state["running"] = False
+
+    document.getElementById("btn-start").addEventListener("click", create_proxy(start))
+    document.getElementById("btn-stop").addEventListener("click", create_proxy(stop))
+
+    # auto-start
+    start()
+  </script>
+
+</body>
+</html>
