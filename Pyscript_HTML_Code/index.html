@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width,initial-scale=1" />
+      <title>MDV tool</title>
+      <link rel="stylesheet" href="https://pyscript.net/releases/2026.3.1/core.css">
+      <script type="module" src="https://pyscript.net/releases/2026.3.1/core.js"></script>
+  </head>
+
+  <body>
+
+    <script type="py" config="./pyscript.json" src="./main.py"></script>
+
+    <!--Velocity buttons & displays-->
+
+    <label>Frame A velocity:</label>
+    <input id="velocity_A" type="number" step="0.01" value="0">
+    <p id="velocity_A_display"></p>
+
+    <label>Frame B velocity:</label>
+    <input id="velocity_B" type="number" step="0.01" value="0">
+    <p id="velocity_B_display"></p>
+
+    <label>Frame C velocity:</label>
+    <input id="velocity_C" type="number" step="0.01" value="0">
+    <p id="velocity_C_display"></p>
+
+    <button py-click="enter_velocities">
+    Enter velocities
+    </button>
+
+    <br>
+
+    <!--Event frame to target frame selection-->
+
+    <label for="event_frames_selection">Event frame:</label>
+    <select name="event_frames" id="event_frames_selection">
+      <option value="A">A</option>
+      <option value="B">B</option>
+      <option value="C">C</option>
+    </select>
+
+    <br>
+
+    <label for="target_frames_selection">Target frame:</label>
+    <select name="target_frames" id="target_frames_selection">
+      <option value="A">A</option>
+      <option value="B">B</option>
+      <option value="C">C</option>
+    </select>
+
+    <br>
+
+    <!--Coordinate transform button-->
+
+    <label>t:</label>
+    <input id="t_input" type="number">
+
+    <label>x:</label>
+    <input id="x_input" type="number">
+    
+    <button py-click="transform_btn">
+    Transform
+    </button>
+
+    <p id="result"></p>
+    
+    <!--Viewpoint switch buttons-->
+    <button py-click="view_A">View A</button>
+    <button py-click="view_B">View B</button>
+    <button py-click="view_C">View C</button>
+
+    <!--Diagram plotting-->
+
+    <svg
+      id="diagram"
+      width="600"
+      height="600"
+      >
+
+      <line
+        x1="0"
+        y1="300"
+        x2="300"
+        y2="600"
+        stroke="black"/>
+
+      <line
+        x1="300"
+        y1="600"
+        x2="600"
+        y2="300"
+        stroke="black"/>
+
+      <line
+        x1="300"
+        y1="0"
+        x2="300"
+        y2="600"
+        stroke="black"/>
+
+      <circle
+      id="event1"
+      cx="300"
+      cy="600"
+      r="5"
+      />
+
+      <!--Worldines of the 3 frames--> 
+
+      <line
+        id="t_axis_prime_A"
+        x1="300"
+        y1="600"
+        x2="300"
+        y2="0"
+        stroke="red"
+      />
+
+      <line
+        id="t_axis_prime_B"
+        x1="300"
+        y1="600"
+        x2="300"
+        y2="0"
+        stroke="green"
+      />
+
+      <line
+        id="t_axis_prime_C"
+        x1="300"
+        y1="600"
+        x2="300"
+        y2="0"
+        stroke="blue"
+      />
+
+    </svg>
+    
+      
+  </body>
+</html>
+
