@@ -1,2 +1,4 @@
-# PRA3353-Special-Relativity-Visualizer-in-Python
-hello it's margot test test :))  
+# MDV Tool (Uploaded by Joey)
+This is a 'new' version of the MDV (Minkowski Diagram Visualizer) tool. It is highly recommended to use the Live Server Extension in Visual Studio Code when opening the HTML file.
+
+The user can enter the velocities of 3 different frames, after which they may hit the 'Enter Velocities' button to confirm their inputs. The ct axes of the 3 frames are then drawn on the diagram, although the scale on the axes is still missing (yet to be done). The 'View A/B/C/Lab' buttons can be used to switch perspective from one frame to another. Finally, there is the calculator tool which allows the user to select an event frame (so in which frame does one describe an event), then select the target frame (to which frame we want to transform that event), and finally press the transform buttons which gives the event-coordinates in the target frame (given by capital X and T).
