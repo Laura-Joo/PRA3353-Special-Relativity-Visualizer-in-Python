@@ -167,9 +167,16 @@ def update_t_axes(event=None):
     vB = Frame_B.velocity
     vC = Frame_C.velocity
 
-    vA_rel = relative_velocity(active_frame.velocity, vA)
-    vB_rel = relative_velocity(active_frame.velocity, vB)
-    vC_rel = relative_velocity(active_frame.velocity, vC)
+    # Lab frame case (no transformation)
+    if active_frame is None:
+        vA_rel = vA
+        vB_rel = vB
+        vC_rel = vC
+
+    else:
+        vA_rel = relative_velocity(active_frame.velocity, vA)
+        vB_rel = relative_velocity(active_frame.velocity, vB)
+        vC_rel = relative_velocity(active_frame.velocity, vC)
 
     t_line_creator(vA_rel, "t_axis_prime_A")
     t_line_creator(vB_rel, "t_axis_prime_B")
@@ -188,7 +195,7 @@ def enter_velocities(event=None):
 
     update_t_axes(event)
 
-active_frame = Frame_A
+active_frame = None   # None = lab frame
 
 def set_view(frame_name, event=None):
     global active_frame
@@ -203,3 +210,8 @@ def view_B(event=None):
 
 def view_C(event=None):
     set_view("C")
+
+def view_lab(event=None):
+    global active_frame
+    active_frame = None
+    update_t_axes()
