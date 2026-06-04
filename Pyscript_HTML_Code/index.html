@@ -4,142 +4,188 @@
       <meta charset="utf-8" />
       <meta name="viewport" content="width=device-width,initial-scale=1" />
       <title>MDV tool</title>
-      <link rel="stylesheet" href="https://pyscript.net/releases/2026.3.1/core.css">
+      <link rel="stylesheet" href="pretty.css">
       <script type="module" src="https://pyscript.net/releases/2026.3.1/core.js"></script>
   </head>
 
   <body>
 
-    <script type="py" config="./pyscript.json" src="./main.py"></script>
+    <script type="py" src="./main.py"></script>
 
-    <!--Velocity buttons & displays-->
+    <div class="layout">
 
-    <label>Frame A velocity:</label>
-    <input id="velocity_A" type="number" step="0.01" value="0">
-    <p id="velocity_A_display"></p>
+      <div class="controls">
 
-    <label>Frame B velocity:</label>
-    <input id="velocity_B" type="number" step="0.01" value="0">
-    <p id="velocity_B_display"></p>
+        <!-- Velocity inputs & displays -->
 
-    <label>Frame C velocity:</label>
-    <input id="velocity_C" type="number" step="0.01" value="0">
-    <p id="velocity_C_display"></p>
+        <label>Frame A velocity:</label>
+        <input id="velocity_A" type="number" step="0.01" value="0" py-input="update_velocities">
 
-    <button py-click="enter_velocities">
-    Enter velocities
-    </button>
+        <br>
 
-    <br>
+        <label>Frame B velocity:</label>
+        <input id="velocity_B" type="number" step="0.01" value="0" py-input="update_velocities">
 
-    <!--Event frame to target frame selection-->
+        <br>
 
-    <label for="event_frames_selection">Event frame:</label>
-    <select name="event_frames" id="event_frames_selection">
-      <option value="A">A</option>
-      <option value="B">B</option>
-      <option value="C">C</option>
-    </select>
+        <label>Frame C velocity:</label>
+        <input id="velocity_C" type="number" step="0.01" value="0" py-input="update_velocities">
 
-    <br>
+        <br>
 
-    <label for="target_frames_selection">Target frame:</label>
-    <select name="target_frames" id="target_frames_selection">
-      <option value="A">A</option>
-      <option value="B">B</option>
-      <option value="C">C</option>
-    </select>
+        <label>Observer frame velocity:</label>
 
-    <br>
+        <input
+            id="lab_velocity_slider"
+            type="range"
+            min="-0.99"
+            max="0.99"
+            step="0.01"
+            value="0"
+            py-input="update_lab_frame"
+          >
 
-    <!--Coordinate transform button-->
+          <span id="lab_velocity_display"> 0.00c</span>
 
-    <label>t:</label>
-    <input id="t_input" type="number">
+        <br>
+        
+        <div id="event_container"></div>
+        <button py-click="add_event">Add event</button>
 
-    <label>x:</label>
-    <input id="x_input" type="number">
+        <br>
+
+        <p id="result"></p>
+
+      </div>
+
+      <!-- Diagram plotting -->
+
+      <div class="diagram-section">
+
+        <svg
+          id="diagram"
+          width="1050"
+          height="700"
+          viewBox="0 0 1200 900"
+          >
+
+          <!-- Background elements -->
+          <g id="background_layer">
+
+            <!-- Lightcone negative -->
+            <line
+              x1="525"
+              y1="600"
+              x2="0"
+              y2="75"
+              stroke="black"/>
+
+            <!-- Lightcone positive -->
+            <line
+              x1="525"
+              y1="600"
+              x2="1050"
+              y2="75"
+              stroke="black"/>
+
+            <!-- Vertical line -->
+            <line
+              x1="525"
+              y1="0"
+              x2="525"
+              y2="600"
+              stroke="black"/>
+
+          </g>
+          
+          <!-- Grid lines -->
+          <g id="grid_layer">
+          </g>
+
+          <!-- Axes and ticks -->
+          <g id="axis_layer">
+          
+             <!-- Worldines of the 3 frames --> 
+
+            <line
+              id="t_axis_prime_A"
+              x1="300"
+              y1="600"
+              x2="300"
+              y2="0"
+              stroke="red"
+            />
+
+            <line
+              id="t_axis_prime_B"
+              x1="300"
+              y1="600"
+              x2="300"
+              y2="0"
+              stroke="green"
+            />
+
+            <line
+              id="t_axis_prime_C"
+              x1="300"
+              y1="600"
+              x2="300"
+              y2="0"
+              stroke="blue"
+            />
+
+            <!-- A ticks -->
+            <line id="tick_A_1" stroke="red"/>
+            <line id="tick_A_2" stroke="red"/>
+            <line id="tick_A_3" stroke="red"/>
+            <line id="tick_A_4" stroke="red"/>
+            <line id="tick_A_5" stroke="red"/>
+
+            <!-- B ticks -->
+            <line id="tick_B_1" stroke="green"/>
+            <line id="tick_B_2" stroke="green"/>
+            <line id="tick_B_3" stroke="green"/>
+            <line id="tick_B_4" stroke="green"/>
+            <line id="tick_B_5" stroke="green"/>
+
+            <!-- C ticks -->
+            <line id="tick_C_1" stroke="blue"/>
+            <line id="tick_C_2" stroke="blue"/>
+            <line id="tick_C_3" stroke="blue"/>
+            <line id="tick_C_4" stroke="blue"/>
+            <line id="tick_C_5" stroke="blue"/>
+
+          </g>
+
+          <!-- Event dots -->
+          <g id="event_layer">
+
+          </g>
+          
+          <!-- Labels -->
+          <g id="label_layer">
+          </g>
+
+        </svg>
+        
+        <!--Viewpoint switch buttons-->
+        <div class="view-buttons">
+
+          <button py-click="view_A">View A</button>
+          <button py-click="view_B">View B</button>
+          <button py-click="view_C">View C</button>
+          <button py-click="view_lab">View Observer</button>
+
+        </div>
+
+      </div>
+
+    </div>
+
     
-    <button py-click="transform_btn">
-    Transform
-    </button>
 
-    <p id="result"></p>
-    
-    <!--Viewpoint switch buttons-->
-    <button py-click="view_A">View A</button>
-    <button py-click="view_B">View B</button>
-    <button py-click="view_C">View C</button>
-    <button py-click="view_lab">View Lab</button>
-    
-    <!--Diagram plotting-->
 
-    <svg
-      id="diagram"
-      width="600"
-      height="600"
-      >
 
-      <line
-        x1="0"
-        y1="300"
-        x2="300"
-        y2="600"
-        stroke="black"/>
-
-      <line
-        x1="300"
-        y1="600"
-        x2="600"
-        y2="300"
-        stroke="black"/>
-
-      <line
-        x1="300"
-        y1="0"
-        x2="300"
-        y2="600"
-        stroke="black"/>
-
-      <circle
-      id="event1"
-      cx="300"
-      cy="600"
-      r="5"
-      />
-
-      <!--Worldines of the 3 frames--> 
-
-      <line
-        id="t_axis_prime_A"
-        x1="300"
-        y1="600"
-        x2="300"
-        y2="0"
-        stroke="red"
-      />
-
-      <line
-        id="t_axis_prime_B"
-        x1="300"
-        y1="600"
-        x2="300"
-        y2="0"
-        stroke="green"
-      />
-
-      <line
-        id="t_axis_prime_C"
-        x1="300"
-        y1="600"
-        x2="300"
-        y2="0"
-        stroke="blue"
-      />
-
-    </svg>
-    
-      
   </body>
 </html>
 

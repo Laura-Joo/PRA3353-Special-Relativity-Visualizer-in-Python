@@ -4,9 +4,27 @@ from pyscript import document
 # constants
 c = 1
 
-# arrays
-all_events = []
-all_frames = []
+# Diagram controls
+ORIGIN_X = 525
+ORIGIN_Y = 600
+SCALE = 80
+axis_length = 10
+
+def spacetime_to_screen(x, t):
+
+    screen_x = ORIGIN_X + x * SCALE
+    screen_y = ORIGIN_Y - t * SCALE
+
+    return (screen_x, screen_y)
+
+# array management
+all_frames = {}
+
+def add_frame_to_total(frame):
+    all_frames[frame.name] = frame
+
+def get_frame_by_name(name):
+    return all_frames.get(name)
 
 # Lorentz transformation functions
 def gamma_factor(v):
@@ -19,55 +37,15 @@ def relative_velocity(vA,vB):
     return V
     # EXTREMELY IMPORTANT: if the input is vA,vB then what we get is vB|A (the velocity of B as seen by A). If the input is vB,vA we get vA|B.
 
-def lorentz_time_transform(t, x, v):
-
-    # call gamma factor function
-    gamma = gamma_factor(v)
-
-    # use gamma factor to determine T coordinate in the other frame
-    T = gamma*(t-(v*x)/(c*c))
-    return T
-
-def lorentz_position_transform(t, x, v):
-
-    # determine gamma-factor from velocity
-    gamma = gamma_factor(v)
-
-    # use gamma factor to determine X coordinate in the other frame
-    X = gamma*(x-v*t)
-    return X
-
 def lorentz_transform(t, x, v):
 
-    # call separate lorentz-functions to transform x and t
-    T = lorentz_time_transform(t, x, v)
-    X = lorentz_position_transform(t, x, v)
+    gamma = gamma_factor(v)
+
+    T = gamma*(t - (v * x)/(c * c))
+    X = gamma*(x - v * t)
     return (T, X)
 
-def transform_event(event, target_frame):
-    T, X = lorentz_transform(event.t, event.x, relative_velocity(event.frame.velocity, target_frame.velocity))
-    return Event(target_frame, T, X)
-
-# Array management functions
-def add_event_to_total(event):
-    all_events.append(event)
-
-def remove_event_from_total(event):
-    all_events.remove(event)
-
-def add_frame_to_total(frame):
-    all_frames.append(frame)
-
-def remove_frame_from_total(frame):
-    all_frames.remove(frame)
-
-def get_frame_by_name(name):
-    for frame in all_frames:
-        if frame.name == name:
-            return frame
-    return None
-
-# frame object definition
+# Object definitions
 class Frame:
     next_id = 0
     
@@ -81,137 +59,371 @@ class Frame:
     def __repr__(self):
         return f"Frame({self.name}, v={self.velocity})"    
 
-# event object definition
-class Event:
-    next_id = 0
-
-    def __init__(self, frame: Frame, t: float, x: float):
-        self.id = Event.next_id
-        Event.next_id += 1
-
-        self.frame = frame
-        self.t = t
-        self.x = x
-
-    def __repr__(self):
-        return f"Event({self.frame.name}, t={self.t}, x={self.x}, event_number={self.next_id})"
-
 # Creating Frame objects & adding to array collection
+
+lab_frame_velocity = 0.0
+Lab_Frame = Frame("Observer", 0.0)
+
 Frame_A = Frame("A", 0.0)
 Frame_B = Frame("B", 0.0)
 Frame_C = Frame("C", 0.0)
 
+add_frame_to_total(Lab_Frame)
 add_frame_to_total(Frame_A)
 add_frame_to_total(Frame_B)
 add_frame_to_total(Frame_C)
 
+### GENERAL FUNCTIONS ###
 
-### CALCULATOR PART ###
-
-# transform_btn: function that handles the coordinate 'Transform' button of the program (separate from the line drawing stuff)
-def transform_btn(event):
-    Frame_A.velocity = float(document.getElementById("velocity_A").value)
-    Frame_B.velocity = float(document.getElementById("velocity_B").value)
-    Frame_C.velocity = float(document.getElementById("velocity_C").value)
-
-
-    event_frame_name = document.getElementById("event_frames_selection").value
-    target_frame_name = document.getElementById("target_frames_selection").value
-
-    event_frame = get_frame_by_name(event_frame_name)
-    target_frame = get_frame_by_name(target_frame_name)
-
-    x = float(document.getElementById("x_input").value)
-    t = float(document.getElementById("t_input").value)
-
-    v_event = event_frame.velocity
-    v_target = target_frame.velocity
-
-    v = relative_velocity(v_event, v_target)
-    T, X = lorentz_transform(t,x,v)
-
-    document.getElementById("result").innerText = f"T = {T:.3f}, X = {X:.3f}"
+# Retrieve velocity inputs from entered values
+def sync_frame_velocities():
+    Frame_A.velocity = float(document.getElementById("velocity_A").value or 0)
+    Frame_B.velocity = float(document.getElementById("velocity_B").value or 0)
+    Frame_C.velocity = float(document.getElementById("velocity_C").value or 0)
 
 
-### LINE DRAWING PART ###
+### DRAWING FUNCTIONS ###
 
 # line_creator: takes v of a frame and adjusts (or 'draws') the ct-line in the html with the corresponding line_id
 def t_line_creator(v: float, line_id: str):
     
     line = document.getElementById(line_id)
 
-    origin_x = 300
-    origin_y = 600
-
-    scale = 300    
-    screen_x1 = origin_x
-    screen_y1 = origin_y
-
-    axis_length = 1
-
     x2 = v * axis_length
     t2 = axis_length
 
-    screen_x2 = origin_x + x2 * scale
-    screen_y2 = origin_y - t2 * scale
+    screen_x2, screen_y2 = spacetime_to_screen(x2, t2)
 
-    line.setAttribute("x1", str(screen_x1))
-    line.setAttribute("y1", str(screen_y1))
+    line.setAttribute("x1", str(ORIGIN_X))
+    line.setAttribute("y1", str(ORIGIN_Y))
     line.setAttribute("x2", str(screen_x2))
     line.setAttribute("y2", str(screen_y2))
 
-# update_t_axes: vA/B/C is set equal to what the user entered, and then line_creator is run for those v's.
+# draw_t_ticks: draw tickmarks on the axes of the frames
+def draw_t_ticks(v: float, prefix: str):
+
+    gamma = gamma_factor(v)
+
+    for i in range(1, 6):
+
+        # Proper time interval
+        tau = i
+
+        # Hyperbolic Minkowski coordinates
+        world_t = gamma * tau
+        world_x = v * gamma * tau
+
+        screen_x, screen_y = spacetime_to_screen(world_x,world_t)
+
+        tick_size = 10
+
+        # perpendicular direction
+        perp_x = -1
+        perp_y = v
+
+        length = m.sqrt(perp_x**2 + perp_y**2)
+
+        perp_x /= length
+        perp_y /= length
+
+        x1 = screen_x - perp_x * tick_size
+        y1 = screen_y - perp_y * tick_size
+
+        x2 = screen_x + perp_x * tick_size
+        y2 = screen_y + perp_y * tick_size
+
+        tick = document.getElementById(f"{prefix}_{i}")
+
+        tick.setAttribute("x1", str(x1))
+        tick.setAttribute("y1", str(y1))
+        tick.setAttribute("x2", str(x2))
+        tick.setAttribute("y2", str(y2))
+
+# Runs line creator for when the lab frame velocity slider is adjusted, and draws ticks on axes
 def update_t_axes(event=None):
 
-    vA = Frame_A.velocity
-    vB = Frame_B.velocity
-    vC = Frame_C.velocity
+    velocity_A_in_view = relative_velocity(lab_frame_velocity,Frame_A.velocity)
+    velocity_B_in_view = relative_velocity(lab_frame_velocity,Frame_B.velocity)
+    velocity_C_in_view = relative_velocity(lab_frame_velocity,Frame_C.velocity)
 
-    # Lab frame case (no transformation)
-    if active_frame is None:
-        vA_rel = vA
-        vB_rel = vB
-        vC_rel = vC
+    t_line_creator(velocity_A_in_view, "t_axis_prime_A")
+    t_line_creator(velocity_B_in_view, "t_axis_prime_B")
+    t_line_creator(velocity_C_in_view, "t_axis_prime_C")
 
-    else:
-        vA_rel = relative_velocity(active_frame.velocity, vA)
-        vB_rel = relative_velocity(active_frame.velocity, vB)
-        vC_rel = relative_velocity(active_frame.velocity, vC)
+    draw_t_ticks(velocity_A_in_view, "tick_A")
+    draw_t_ticks(velocity_B_in_view, "tick_B")
+    draw_t_ticks(velocity_C_in_view, "tick_C")
 
-    t_line_creator(vA_rel, "t_axis_prime_A")
-    t_line_creator(vB_rel, "t_axis_prime_B")
-    t_line_creator(vC_rel, "t_axis_prime_C")
+def update_velocities(event=None):
 
-# enter_velocities: 
-def enter_velocities(event=None):
-
-    Frame_A.velocity = float(document.getElementById("velocity_A").value)
-    Frame_B.velocity = float(document.getElementById("velocity_B").value)
-    Frame_C.velocity = float(document.getElementById("velocity_C").value)
+    sync_frame_velocities()
 
     document.getElementById("velocity_A_display").innerText = f"vA = {Frame_A.velocity:.2f}c"
     document.getElementById("velocity_B_display").innerText = f"vB = {Frame_B.velocity:.2f}c"
     document.getElementById("velocity_C_display").innerText = f"vC = {Frame_C.velocity:.2f}c"
 
-    update_t_axes(event)
+    update_t_axes() # Draw axes with ticks on them
+    update_all_event_positions() # Red event dots updating
 
-active_frame = None   # None = lab frame
+def update_lab_frame(event=None):
 
-def set_view(frame_name, event=None):
-    global active_frame
-    active_frame = get_frame_by_name(frame_name)
+    global lab_frame_velocity
+
+    lab_frame_velocity = float(
+        document.getElementById("lab_velocity_slider").value)
+    
+    document.getElementById("lab_velocity_display").innerText = f"{lab_frame_velocity:.2f}c"
+
+    update_t_axes()
+    update_all_event_positions()
+
+### VIEW ADJUSTING FUNCTIONS ###
+
+def set_view_velocity(v):
+
+    global lab_frame_velocity
+
+    lab_frame_velocity = v
+
+    slider = document.getElementById("lab_velocity_slider")
+    slider.value = str(v)
+
+    document.getElementById("lab_velocity_display").innerText = f"{v:.2f}c"
+
     update_t_axes()
 
 def view_A(event=None):
-    set_view("A")
+    set_view_velocity(Frame_A.velocity)
+    update_all_event_positions()
 
 def view_B(event=None):
-    set_view("B")
+    set_view_velocity(Frame_B.velocity)
+    update_all_event_positions()
 
 def view_C(event=None):
-    set_view("C")
+    set_view_velocity(Frame_C.velocity)
+    update_all_event_positions()
 
 def view_lab(event=None):
-    global active_frame
-    active_frame = None
-    update_t_axes()
+    set_view_velocity(0.0)
+    update_all_event_positions()
+
+
+### EVENT FUNCTIONS ###
+
+event_counter = 0
+
+# Make points move as the axes are shifted    
+def update_event_position(event_number):
+    point = document.getElementById(f"event_point_{event_number}")
+    if point is None:
+        return
+    
+    t_input = document.getElementById(f"t_{event_number}")
+    x_input = document.getElementById(f"x_{event_number}")
+    frame_input = document.getElementById(f"event_frames_selection_{event_number}")
+
+    if not t_input or not x_input or not frame_input:
+        return
+    if t_input.value == "" or x_input.value == "":
+        return
+
+    try:
+        t = float(t_input.value)
+        x = float(x_input.value)
+    except:
+        return
+
+    event_frame = get_frame_by_name(frame_input.value)
+    if event_frame is None:
+        return
+
+    v = relative_velocity(event_frame.velocity, lab_frame_velocity)
+    T, X = lorentz_transform(t, x, v)
+
+    screen_x, screen_y = spacetime_to_screen(X,T)
+
+    point.setAttribute("cx", str(screen_x))
+    point.setAttribute("cy", str(screen_y))
+
+def update_all_event_positions():
+    points = document.querySelectorAll("[id^='event_point_']")
+    for point in points:
+        event_number = point.id.split("_")[-1]
+        update_event_position(event_number)
+
+def transform_event_button(event_number):
+
+    sync_frame_velocities()
+
+    # Selected frames
+    event_frame_name = document.getElementById(f"event_frames_selection_{event_number}").value
+    target_frame_name = document.getElementById(f"target_frames_selection_{event_number}").value
+
+    event_frame = get_frame_by_name(event_frame_name)
+    target_frame = get_frame_by_name(target_frame_name)
+
+    # Event coordinates
+    x = float(document.getElementById(f"x_{event_number}").value)
+    t = float(document.getElementById(f"t_{event_number}").value)
+
+    # Relative velocity
+    v = relative_velocity(event_frame.velocity,target_frame.velocity)
+
+    # Lorentz transform
+    T, X = lorentz_transform(t, x, v)
+
+    document.getElementById(f"result_{event_number}").innerText = f"T = {T:.3f}, X = {X:.3f}"
+    update_event_position(event_number)
+
+# Remove the created event
+def remove_event(event_number):
+
+    event_div = document.getElementById(f"event_{event_number}")
+    if event_div is not None:
+        event_div.remove()
+    
+    point = document.getElementById(f"event_point_{event_number}")
+    if point is not None:
+        point.remove()
+
+# Generate an input-box in the HTML
+def make_input(id, type="number", width="60px", placeholder=""):
+    element = document.createElement("input")
+    element.type = type
+    element.id = id
+    element.style.width = width
+    element.placeholder = placeholder
+    return element
+
+# Create a new event 'div'
+def add_event(event=None):
+    global event_counter
+    event_counter += 1
+
+    # Create container space
+    container = document.getElementById("event_container")
+
+    # Create an event 'div' (so sort of object space)
+    new_event = document.createElement("div")
+    new_event.id = f"event_{event_counter}"
+    new_event.style.border = "1px solid black"
+    new_event.style.display = "inline-block"
+    new_event.style.margin = "5px"
+    new_event.style.padding = "10px"
+    
+    # Create title (= event number) in front of input boxes
+    title = document.createElement("div")
+    title.innerText = f"Event {event_counter}:"
+    new_event.appendChild(title)
+
+    # Create event frame text in front of dropbox
+    event_label = document.createElement("span")
+    event_label.innerText = " Event Frame :"
+    new_event.appendChild(event_label)
+
+    # Create a dropbox for event frame selection
+    event_frame_select = document.createElement("select")
+    event_frame_select.onchange = lambda e, n=event_counter: update_event_position(n)
+    event_frame_select.id = f"event_frames_selection_{event_counter}"
+    for f in all_frames.values():
+        option = document.createElement("option")
+        option.value = f.name
+        option.innerText = f.name
+        event_frame_select.appendChild(option)
+    event_frame_select.style.margin = "10px"
+    new_event.appendChild(event_frame_select)
+
+    # Create t-input text
+    t_label = document.createElement("span")
+    t_label.innerText = " t: "
+    new_event.appendChild(t_label)
+
+    # Create t-input box
+    t_input = make_input(f"t_{event_counter}",placeholder="t")
+    t_input.oninput = lambda e, n=event_counter: update_event_position(n)
+    new_event.appendChild(t_input)
+
+    # Create x-input text
+    x_label = document.createElement("span")
+    x_label.innerText = " x: "
+    new_event.appendChild(x_label)
+
+    # Create x-input box
+    x_input = make_input(f"x_{event_counter}",placeholder="x")
+    x_input.oninput = lambda e, n=event_counter: update_event_position(n)
+    new_event.appendChild(x_input)
+
+    # Insert line break
+    line_break = document.createElement("br")
+    new_event.appendChild(line_break)
+
+    # Create target frame text after dropbox
+    target_label = document.createElement("span")
+    target_label.innerText = " Target Frame :"
+    new_event.appendChild(target_label)
+
+    # Create a dropbox for target frame selection
+    target_frame_select = document.createElement("select")
+    target_frame_select.id = f"target_frames_selection_{event_counter}"
+    for f in all_frames.values():
+        option = document.createElement("option")
+        option.value = f.name
+        option.innerText = f.name
+        target_frame_select.appendChild(option)
+    target_frame_select.style.margin = "10px"
+    new_event.appendChild(target_frame_select)
+
+    # Create transform button
+    trans_button = document.createElement("button")
+    trans_button.type = "button"
+    trans_button.innerText = "Transform"
+    trans_button.onclick = lambda e, n=event_counter: transform_event_button(n)
+    new_event.appendChild(trans_button)
+
+    # Create result container
+    result_container = document.createElement("div")
+    result_container.style.marginTop = "10px"
+    result_container.style.marginBottom = "10px"
+
+    # Create transformed coordinate text before result
+    result_label = document.createElement("span")
+    result_label.innerText = "Transformed coordinates: "
+    result_container.appendChild(result_label)
+
+    # Create result display
+    result = document.createElement("span")
+    result.id = f"result_{event_counter}"
+    result.innerText = ""
+    result_container.appendChild(result)
+
+    # Add entire result container
+    new_event.appendChild(result_container)
+
+    # Create SVG dot and insert into HTML
+    event_point = document.createElementNS("http://www.w3.org/2000/svg","circle")
+    event_point.id = f"event_point_{event_counter}"
+
+    event_point.setAttribute("r", "6")
+    event_point.setAttribute("fill", "red")
+
+    event_layer = document.getElementById("event_layer")
+    event_layer.appendChild(event_point)
+
+    # Create 'Remove Event' button
+    remove_button = document.createElement("button")
+    remove_button.type = "button"
+    remove_button.innerText = f"Remove Event {event_counter}"
+    remove_button.onclick = lambda e, n=event_counter: remove_event(n)
+    new_event.appendChild(remove_button)
+
+    # Append the entire event to the container space
+    container.appendChild(new_event)
+
+
+update_lab_frame()
+
+### OBJECTIVES ###
+# Add Frame line labels + Event labels (Event 1, Event 2 etc.)
+# Add toggleable gridlines
+# Make diagram more aesthetically pleasing
