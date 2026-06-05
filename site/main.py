@@ -7,8 +7,10 @@ c = 1
 # Diagram controls
 ORIGIN_X = 525
 ORIGIN_Y = 600
-SCALE = 80
-axis_length = 10
+SCALE = 20
+axis_length = 30
+amount_of_ticks = 30
+tick_size = 10
 
 def spacetime_to_screen(x, t):
 
@@ -81,7 +83,6 @@ def sync_frame_velocities():
     Frame_B.velocity = float(document.getElementById("velocity_B").value or 0)
     Frame_C.velocity = float(document.getElementById("velocity_C").value or 0)
 
-
 ### DRAWING FUNCTIONS ###
 
 # line_creator: takes v of a frame and adjusts (or 'draws') the ct-line in the html with the corresponding line_id
@@ -99,12 +100,50 @@ def t_line_creator(v: float, line_id: str):
     line.setAttribute("x2", str(screen_x2))
     line.setAttribute("y2", str(screen_y2))
 
+# Create ticks on t-axes
+def create_tick_marks(prefix, color="black"):
+
+    tick_layer = document.getElementById("axis_layer")
+
+    for i in range(1, amount_of_ticks + 1):
+
+        tick = document.createElementNS("http://www.w3.org/2000/svg","line")
+        tick.id = f"{prefix}_{i}"
+        tick.setAttribute("stroke", color)
+        tick.setAttribute("stroke-width", "2")
+
+        tick_layer.appendChild(tick)
+
+# Create ticks on the black static axes
+def draw_static_axes_ticks(event=None):
+
+    for i in range(1, amount_of_ticks + 1):
+
+        # coordinates on stationary ct-axis
+        world_t = i
+        world_x = 0
+
+        screen_x, screen_y = spacetime_to_screen(world_x, world_t)
+
+        x1 = screen_x - tick_size
+        y1 = screen_y
+
+        x2 = screen_x + tick_size
+        y2 = screen_y
+
+        tick = document.getElementById(f"static_axes_tick_{i}")
+
+        tick.setAttribute("x1", str(x1))
+        tick.setAttribute("y1", str(y1))
+        tick.setAttribute("x2", str(x2))
+        tick.setAttribute("y2", str(y2))
+
 # draw_t_ticks: draw tickmarks on the axes of the frames
 def draw_t_ticks(v: float, prefix: str):
 
     gamma = gamma_factor(v)
 
-    for i in range(1, 6):
+    for i in range(1, amount_of_ticks + 1):
 
         # Proper time interval
         tau = i
@@ -114,8 +153,6 @@ def draw_t_ticks(v: float, prefix: str):
         world_x = v * gamma * tau
 
         screen_x, screen_y = spacetime_to_screen(world_x,world_t)
-
-        tick_size = 10
 
         # perpendicular direction
         perp_x = -1
@@ -139,21 +176,45 @@ def draw_t_ticks(v: float, prefix: str):
         tick.setAttribute("x2", str(x2))
         tick.setAttribute("y2", str(y2))
 
-# Runs line creator for when the lab frame velocity slider is adjusted, and draws ticks on axes
+# Update the position of axes labels
+def update_axis_label(v, label_id):
+
+    label = document.getElementById(label_id)
+
+    x = v * axis_length
+    t = 0
+
+    screen_x, screen_y = spacetime_to_screen(x, t)
+    screen_x += 10
+    screen_y = 40
+
+    label.setAttribute("x", str(screen_x + 10))
+    label.setAttribute("y", str(screen_y))
+
+# Runs line creator and draw_ticks functions
 def update_t_axes(event=None):
 
     velocity_A_in_view = relative_velocity(lab_frame_velocity,Frame_A.velocity)
     velocity_B_in_view = relative_velocity(lab_frame_velocity,Frame_B.velocity)
     velocity_C_in_view = relative_velocity(lab_frame_velocity,Frame_C.velocity)
 
+    # Create frame wordlines
     t_line_creator(velocity_A_in_view, "t_axis_prime_A")
     t_line_creator(velocity_B_in_view, "t_axis_prime_B")
     t_line_creator(velocity_C_in_view, "t_axis_prime_C")
 
+    # Draw ticks on the newly created axes
+    draw_static_axes_ticks()
     draw_t_ticks(velocity_A_in_view, "tick_A")
     draw_t_ticks(velocity_B_in_view, "tick_B")
     draw_t_ticks(velocity_C_in_view, "tick_C")
 
+    # Assign labels to each frame worldine
+    update_axis_label(velocity_A_in_view, "label_A")
+    update_axis_label(velocity_B_in_view, "label_B")
+    update_axis_label(velocity_C_in_view, "label_C")
+
+# Update axes and event points if vA/B/C changes
 def update_velocities(event=None):
 
     sync_frame_velocities()
@@ -165,6 +226,7 @@ def update_velocities(event=None):
     update_t_axes() # Draw axes with ticks on them
     update_all_event_positions() # Red event dots updating
 
+# Update axes when slider is adjusted
 def update_lab_frame(event=None):
 
     global lab_frame_velocity
@@ -176,6 +238,113 @@ def update_lab_frame(event=None):
 
     update_t_axes()
     update_all_event_positions()
+
+# Create axis label objects
+def create_axis_label(label_id, text, color="black"):
+
+    axis_layer = document.getElementById("axis_layer")
+
+    label = document.createElementNS("http://www.w3.org/2000/svg","text")
+    label.id = label_id
+    label.textContent = text
+    label.setAttribute("fill", color)
+    label.setAttribute("font-size", "20")
+
+    axis_layer.appendChild(label)
+
+# Create static gridlines
+def create_static_grid():
+    grid_layer = document.getElementById("grid_layer")
+
+    # Vertical lines
+    for i in range(-30, 28):
+
+        line = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "line"
+        )
+
+        line.id = f"grid_x_{i}"
+
+        x, y1 = spacetime_to_screen(i, 0)
+        x, y2 = spacetime_to_screen(i, 30)
+
+        line.setAttribute("x1", str(x))
+        line.setAttribute("y1", str(y1))
+        line.setAttribute("x2", str(x))
+        line.setAttribute("y2", str(y2))
+
+        line.setAttribute("stroke", "black")
+        line.setAttribute("stroke-width", "1")
+        line.setAttribute("opacity", "0.2")
+
+        grid_layer.appendChild(line)
+
+    # Horizontal lines
+    for i in range(0, 31):
+
+        line = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "line"
+        )
+
+        x1, y = spacetime_to_screen(-30, i)
+        x2, y = spacetime_to_screen(27, i)
+
+        line.setAttribute("x1", str(x1))
+        line.setAttribute("y1", str(y))
+        line.setAttribute("x2", str(x2))
+        line.setAttribute("y2", str(y))
+
+        line.setAttribute("stroke", "black")
+        line.setAttribute("stroke-width", "1")
+        line.setAttribute("opacity", "0.2")
+
+        grid_layer.appendChild(line)       
+
+def create_frame_grid():
+    grid_layer = document.getElementById("grid_layer")
+
+    frames = [("A", Frame_A),("B", Frame_B),("C", Frame_C)]
+
+    for prefix, frame in frames:
+
+        checkbox = document.getElementById(f"gridlines_{prefix}")
+
+        if not checkbox or not checkbox.checked:
+            continue
+
+    v = relative_velocity(frame.velocity, lab_frame_velocity)
+    gamma = gamma_factor(v)
+
+    for i in range(-10, 11):
+
+        # vertical lines (constant x')
+        x_prime = i
+
+        t1_prime = -10
+        t2_prime = 10
+
+        T1, X1 = lorentz_transform(t1_prime, x_prime, v)
+        T2, X2 = lorentz_transform(t2_prime, x_prime, v)
+
+        x1, y1 = spacetime_to_screen(X1, T1)
+        x2, y2 = spacetime_to_screen(X2, T2)
+
+        line = document.createElementNS("http://www.w3.org/2000/svg", "line")
+
+        line.setAttribute("x1", str(x1))
+        line.setAttribute("y1", str(y1))
+        line.setAttribute("x2", str(x2))
+        line.setAttribute("y2", str(y2))
+
+        line.setAttribute("stroke", "#bbb")
+        line.setAttribute("stroke-width", "1")
+        line.setAttribute("opacity", "0.3")
+
+        grid_layer.appendChild(line)
+
+
 
 ### VIEW ADJUSTING FUNCTIONS ###
 
@@ -246,6 +415,11 @@ def update_event_position(event_number):
     point.setAttribute("cx", str(screen_x))
     point.setAttribute("cy", str(screen_y))
 
+    # Add and fill in the label of the new event
+    label = document.getElementById(f"event_label_{event_number}")
+    label.setAttribute("x", str(screen_x + 10))
+    label.setAttribute("y", str(screen_y - 10))
+
 def update_all_event_positions():
     points = document.querySelectorAll("[id^='event_point_']")
     for point in points:
@@ -279,13 +453,20 @@ def transform_event_button(event_number):
 # Remove the created event
 def remove_event(event_number):
 
+    # Remove the entire event 'div'
     event_div = document.getElementById(f"event_{event_number}")
     if event_div is not None:
         event_div.remove()
     
+    # Remove the point element
     point = document.getElementById(f"event_point_{event_number}")
     if point is not None:
         point.remove()
+
+    # Remove the label
+    label = document.getElementById(f"event_label_{event_number}")
+    if label is not None:
+        label.remove()
 
 # Generate an input-box in the HTML
 def make_input(id, type="number", width="60px", placeholder=""):
@@ -405,10 +586,19 @@ def add_event(event=None):
     event_point.id = f"event_point_{event_counter}"
 
     event_point.setAttribute("r", "6")
-    event_point.setAttribute("fill", "red")
+    event_point.setAttribute("fill", "yellow")
 
     event_layer = document.getElementById("event_layer")
     event_layer.appendChild(event_point)
+
+    # Create SVG dot label
+    event_label = document.createElementNS("http://www.w3.org/2000/svg","text")
+    event_label.id = f"event_label_{event_counter}"
+    event_label.textContent = f"E{event_counter}"
+    event_label.setAttribute("fill", "yellow")
+    event_label.setAttribute("font-size", "16")
+
+    event_layer.appendChild(event_label)
 
     # Create 'Remove Event' button
     remove_button = document.createElement("button")
@@ -420,10 +610,22 @@ def add_event(event=None):
     # Append the entire event to the container space
     container.appendChild(new_event)
 
+# Run functions to create tickmarks and labels once.
+create_tick_marks("static_axes_tick", "black")
+create_tick_marks("tick_A", "red")
+create_tick_marks("tick_B", "green")
+create_tick_marks("tick_C", "blue")
 
+create_axis_label("label_A", "A", "red")
+create_axis_label("label_B", "B", "green")
+create_axis_label("label_C", "C", "blue")
+
+
+
+create_static_grid()
 update_lab_frame()
+update_velocities()
 
-### OBJECTIVES ###
-# Add Frame line labels + Event labels (Event 1, Event 2 etc.)
+### FUTURE OBJECTIVES ###
 # Add toggleable gridlines
 # Make diagram more aesthetically pleasing
