@@ -21,19 +21,31 @@
         <label>Frame A velocity:</label>
         <input id="velocity_A" type="number" step="0.01" value="0" py-input="update_velocities">
 
+        <!-- Grid checkbox A -->
+        <input type="checkbox" id="gridlines_A" name="gridlines_A" value="on">
+        <label for="gridlines_A"> Show gridlines</label><br>
+
         <br>
 
         <label>Frame B velocity:</label>
         <input id="velocity_B" type="number" step="0.01" value="0" py-input="update_velocities">
+
+        <!-- Grid checkbox B -->
+        <input type="checkbox" id="gridlines_B" name="gridlines_B" value="on">
+        <label for="gridlines_B"> Show gridlines</label><br>
 
         <br>
 
         <label>Frame C velocity:</label>
         <input id="velocity_C" type="number" step="0.01" value="0" py-input="update_velocities">
 
+        <!-- Grid checkbox -->
+        <input type="checkbox" id="gridlines_C" name="gridlines_C" value="on">
+        <label for="gridlines_C"> Show gridlines</label><br>
+
         <br>
 
-        <label>Observer frame velocity:</label>
+        <label>Transition between frames:</label>
 
         <input
             id="lab_velocity_slider"
@@ -44,8 +56,6 @@
             value="0"
             py-input="update_lab_frame"
           >
-
-          <span id="lab_velocity_display"> 0.00c</span>
 
         <br>
         
@@ -66,7 +76,7 @@
           id="diagram"
           width="1050"
           height="700"
-          viewBox="0 0 1200 900"
+          viewBox="0 0 1100 750"
           >
 
           <!-- Background elements -->
@@ -104,7 +114,7 @@
 
           <!-- Axes and ticks -->
           <g id="axis_layer">
-          
+
              <!-- Worldines of the 3 frames --> 
 
             <line
@@ -134,26 +144,12 @@
               stroke="blue"
             />
 
-            <!-- A ticks -->
-            <line id="tick_A_1" stroke="red"/>
-            <line id="tick_A_2" stroke="red"/>
-            <line id="tick_A_3" stroke="red"/>
-            <line id="tick_A_4" stroke="red"/>
-            <line id="tick_A_5" stroke="red"/>
-
-            <!-- B ticks -->
-            <line id="tick_B_1" stroke="green"/>
-            <line id="tick_B_2" stroke="green"/>
-            <line id="tick_B_3" stroke="green"/>
-            <line id="tick_B_4" stroke="green"/>
-            <line id="tick_B_5" stroke="green"/>
-
-            <!-- C ticks -->
-            <line id="tick_C_1" stroke="blue"/>
-            <line id="tick_C_2" stroke="blue"/>
-            <line id="tick_C_3" stroke="blue"/>
-            <line id="tick_C_4" stroke="blue"/>
-            <line id="tick_C_5" stroke="blue"/>
+              <text id="label_ct_axis"
+                x="545"
+                y="15"
+                fill="black"
+                font-size="18">ct
+              </text>
 
           </g>
 
