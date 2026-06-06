@@ -9,8 +9,12 @@ ORIGIN_X = 525
 ORIGIN_Y = 600
 SCALE = 20
 axis_length = 30
-amount_of_ticks = 30
+amount_of_t_ticks = 30
+amount_of_x_ticks = 26
 tick_size = 10
+static_axes_tick_size = 5
+LIGHTCONE_SCALE = 70
+worldline_length = 50
 
 def spacetime_to_screen(x, t):
 
@@ -90,13 +94,17 @@ def t_line_creator(v: float, line_id: str):
     
     line = document.getElementById(line_id)
 
+    x1 = -v * axis_length
+    t1 = -axis_length
+
     x2 = v * axis_length
     t2 = axis_length
 
+    screen_x1, screen_y1 = spacetime_to_screen(x1, t1)
     screen_x2, screen_y2 = spacetime_to_screen(x2, t2)
 
-    line.setAttribute("x1", str(ORIGIN_X))
-    line.setAttribute("y1", str(ORIGIN_Y))
+    line.setAttribute("x1", str(screen_x1))
+    line.setAttribute("y1", str(screen_y1))
     line.setAttribute("x2", str(screen_x2))
     line.setAttribute("y2", str(screen_y2))
 
@@ -105,7 +113,7 @@ def create_tick_marks(prefix, color="black"):
 
     tick_layer = document.getElementById("axis_layer")
 
-    for i in range(1, amount_of_ticks + 1):
+    for i in range(-amount_of_t_ticks, amount_of_t_ticks + 1):
 
         tick = document.createElementNS("http://www.w3.org/2000/svg","line")
         tick.id = f"{prefix}_{i}"
@@ -117,7 +125,7 @@ def create_tick_marks(prefix, color="black"):
 # Create ticks on the black static axes
 def draw_static_axes_ticks(event=None):
 
-    for i in range(1, amount_of_ticks + 1):
+    for i in range(-amount_of_t_ticks, amount_of_t_ticks + 1):
 
         # coordinates on stationary ct-axis
         world_t = i
@@ -125,13 +133,34 @@ def draw_static_axes_ticks(event=None):
 
         screen_x, screen_y = spacetime_to_screen(world_x, world_t)
 
-        x1 = screen_x - tick_size
+        x1 = screen_x - static_axes_tick_size
         y1 = screen_y
 
-        x2 = screen_x + tick_size
+        x2 = screen_x + static_axes_tick_size
         y2 = screen_y
 
-        tick = document.getElementById(f"static_axes_tick_{i}")
+        tick = document.getElementById(f"static_x_axis_tick_{i}")
+
+        tick.setAttribute("x1", str(x1))
+        tick.setAttribute("y1", str(y1))
+        tick.setAttribute("x2", str(x2))
+        tick.setAttribute("y2", str(y2))
+
+    for i in range(-amount_of_x_ticks, amount_of_x_ticks + 1):
+
+        # coordinates on stationary x-axis
+        world_t = 0
+        world_x = i
+
+        screen_x, screen_y = spacetime_to_screen(world_x, world_t)
+
+        x1 = screen_x
+        y1 = screen_y + static_axes_tick_size
+
+        x2 = screen_x
+        y2 = screen_y - static_axes_tick_size
+
+        tick = document.getElementById(f"static_y_axis_tick_{i}")
 
         tick.setAttribute("x1", str(x1))
         tick.setAttribute("y1", str(y1))
@@ -143,7 +172,7 @@ def draw_t_ticks(v: float, prefix: str):
 
     gamma = gamma_factor(v)
 
-    for i in range(1, amount_of_ticks + 1):
+    for i in range(-amount_of_t_ticks, amount_of_t_ticks + 1):
 
         # Proper time interval
         tau = i
@@ -175,6 +204,148 @@ def draw_t_ticks(v: float, prefix: str):
         tick.setAttribute("y1", str(y1))
         tick.setAttribute("x2", str(x2))
         tick.setAttribute("y2", str(y2))
+
+### LIGHTCONE PER EVENT ###
+
+def draw_light_cones(event_number):
+   
+    remove_lightcones(event_number)
+
+    point = document.getElementById(f"event_point_{event_number}")
+    if point is None:
+        return
+    
+    x_coordinate = float(point.getAttribute("cx"))
+    y_coordinate = float(point.getAttribute("cy"))
+
+    positive_x_beginpoint = x_coordinate - (LIGHTCONE_SCALE * 10)
+    positive_y_beginpoint = y_coordinate + (LIGHTCONE_SCALE * 10)
+
+    negative_x_beginpoint = x_coordinate + (LIGHTCONE_SCALE * 10)
+    negative_y_beginpoint = y_coordinate + (LIGHTCONE_SCALE * 10)
+
+    positive_x_endpoint = x_coordinate + (LIGHTCONE_SCALE * 10)
+    positive_y_endpoint = y_coordinate - (LIGHTCONE_SCALE * 10)
+
+    negative_x_endpoint = x_coordinate - (LIGHTCONE_SCALE * 10)
+    negative_y_endpoint = y_coordinate - (LIGHTCONE_SCALE * 10)
+
+    positive_lightcone = document.createElementNS("http://www.w3.org/2000/svg","line")
+    positive_lightcone.id = f"pos_lightcone_{event_number}"
+    positive_lightcone.setAttribute("x1", str(positive_x_beginpoint))
+    positive_lightcone.setAttribute("y1", str(positive_y_beginpoint))
+    positive_lightcone.setAttribute("x2", str(positive_x_endpoint))
+    positive_lightcone.setAttribute("y2", str(positive_y_endpoint))
+    positive_lightcone.setAttribute("stroke", "black")
+
+    negative_lightcone = document.createElementNS("http://www.w3.org/2000/svg","line")
+    negative_lightcone.id = f"neg_lightcone_{event_number}"
+    negative_lightcone.setAttribute("x1", str(negative_x_beginpoint))
+    negative_lightcone.setAttribute("y1", str(negative_y_beginpoint))
+    negative_lightcone.setAttribute("x2", str(negative_x_endpoint))
+    negative_lightcone.setAttribute("y2", str(negative_y_endpoint))
+    negative_lightcone.setAttribute("stroke", "black")
+
+    event_layer = document.getElementById("event_layer")
+
+    event_layer.appendChild(positive_lightcone)
+    event_layer.appendChild(negative_lightcone)
+
+def remove_lightcones(event_number):
+    positive_lightcone = document.getElementById(f"pos_lightcone_{event_number}")
+    negative_lightcone = document.getElementById(f"neg_lightcone_{event_number}")
+    if not positive_lightcone:
+        return
+    
+    positive_lightcone.remove()
+
+    if not negative_lightcone:
+        return
+    
+    negative_lightcone.remove()
+
+def handle_lightcone_checkbox(event):
+
+    checkbox = event.target
+
+    event_number = checkbox.id.replace("lightcone_checkbox_", "")
+
+    if checkbox.checked:
+        draw_light_cones(event_number)
+
+    else:
+        remove_lightcones(event_number)
+
+
+### WORLDLINE PER EVENT ###
+
+# Draw worldline through an event
+def draw_worldline(event_number):
+    
+    remove_worldline(event_number)
+
+    point = document.getElementById(f"event_point_{event_number}")
+    if point is None:
+        return
+    
+    x_shift = float(point.getAttribute("cx")) - ORIGIN_X
+    y_shift = float(point.getAttribute("cy")) - ORIGIN_Y
+
+    selected_frame_name = document.getElementById(f"event_frames_selection_{event_number}").value
+    selected_frame = get_frame_by_name(selected_frame_name)
+
+    v = relative_velocity(lab_frame_velocity, selected_frame.velocity)
+
+    x1 = -v * worldline_length
+    t1 = -worldline_length
+
+    x2 = v * worldline_length
+    t2 = worldline_length
+
+    screen_x1, screen_y1 = spacetime_to_screen(x1, t1)
+    screen_x2, screen_y2 = spacetime_to_screen(x2, t2)
+
+    screen_x1 += x_shift
+    screen_y1 += y_shift
+    screen_x2 += x_shift
+    screen_y2 += y_shift
+
+    worldline = document.createElementNS("http://www.w3.org/2000/svg","line")
+    worldline.id = f"worldline_{event_number}"
+    worldline.setAttribute("stroke", "yellow")
+
+    worldline.setAttribute("x1", str(screen_x1))
+    worldline.setAttribute("y1", str(screen_y1))
+    worldline.setAttribute("x2", str(screen_x2))
+    worldline.setAttribute("y2", str(screen_y2))
+
+    event_layer = document.getElementById("event_layer")
+
+    event_layer.appendChild(worldline)
+
+# Remove the worldline through an event    
+def remove_worldline(event_number):
+    worldline = document.getElementById(f"worldline_{event_number}")
+
+    if not worldline:
+        return
+    
+    worldline.remove()
+
+
+def handle_worldline_checkbox(event):
+
+    checkbox = event.target
+
+    event_number = checkbox.id.replace("worldline_checkbox_", "")
+
+    if checkbox.checked:
+        draw_worldline(event_number)
+
+    else:
+        remove_worldline(event_number)
+
+
 
 # Update the position of axes labels
 def update_axis_label(v, label_id):
@@ -257,16 +428,14 @@ def create_static_grid():
     grid_layer = document.getElementById("grid_layer")
 
     # Vertical lines
-    for i in range(-30, 28):
+    # (x_min, x_max)
+    for i in range(-30, 27):
 
-        line = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "line"
-        )
+        line = document.createElementNS("http://www.w3.org/2000/svg","line")
 
         line.id = f"grid_x_{i}"
 
-        x, y1 = spacetime_to_screen(i, 0)
+        x, y1 = spacetime_to_screen(i, -30)
         x, y2 = spacetime_to_screen(i, 30)
 
         line.setAttribute("x1", str(x))
@@ -281,15 +450,13 @@ def create_static_grid():
         grid_layer.appendChild(line)
 
     # Horizontal lines
-    for i in range(0, 31):
+    # (y_min, y_max)
+    for i in range(-30, 31):
 
-        line = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "line"
-        )
+        line = document.createElementNS("http://www.w3.org/2000/svg","line")
 
         x1, y = spacetime_to_screen(-30, i)
-        x2, y = spacetime_to_screen(27, i)
+        x2, y = spacetime_to_screen(26, i)
 
         line.setAttribute("x1", str(x1))
         line.setAttribute("y1", str(y))
@@ -301,50 +468,6 @@ def create_static_grid():
         line.setAttribute("opacity", "0.2")
 
         grid_layer.appendChild(line)       
-
-def create_frame_grid():
-    grid_layer = document.getElementById("grid_layer")
-
-    frames = [("A", Frame_A),("B", Frame_B),("C", Frame_C)]
-
-    for prefix, frame in frames:
-
-        checkbox = document.getElementById(f"gridlines_{prefix}")
-
-        if not checkbox or not checkbox.checked:
-            continue
-
-    v = relative_velocity(frame.velocity, lab_frame_velocity)
-    gamma = gamma_factor(v)
-
-    for i in range(-10, 11):
-
-        # vertical lines (constant x')
-        x_prime = i
-
-        t1_prime = -10
-        t2_prime = 10
-
-        T1, X1 = lorentz_transform(t1_prime, x_prime, v)
-        T2, X2 = lorentz_transform(t2_prime, x_prime, v)
-
-        x1, y1 = spacetime_to_screen(X1, T1)
-        x2, y2 = spacetime_to_screen(X2, T2)
-
-        line = document.createElementNS("http://www.w3.org/2000/svg", "line")
-
-        line.setAttribute("x1", str(x1))
-        line.setAttribute("y1", str(y1))
-        line.setAttribute("x2", str(x2))
-        line.setAttribute("y2", str(y2))
-
-        line.setAttribute("stroke", "#bbb")
-        line.setAttribute("stroke-width", "1")
-        line.setAttribute("opacity", "0.3")
-
-        grid_layer.appendChild(line)
-
-
 
 ### VIEW ADJUSTING FUNCTIONS ###
 
@@ -415,10 +538,28 @@ def update_event_position(event_number):
     point.setAttribute("cx", str(screen_x))
     point.setAttribute("cy", str(screen_y))
 
+
+    # Redraw lightcones if checkbox is checked and coordinates/velocities change
+    checkbox_lightcones = document.getElementById(f"lightcone_checkbox_{event_number}")
+
+    if checkbox_lightcones is not None and checkbox_lightcones.checked:
+
+        remove_lightcones(event_number)
+        draw_light_cones(event_number)
+
+        
+    # Redraw worldline if checkbox is checked and coordinates/velocities change
+    checkbox_worldline = document.getElementById(f"worldline_checkbox_{event_number}")
+
+    if checkbox_worldline is not None and checkbox_worldline.checked:
+
+        remove_worldline(event_number)
+        draw_worldline(event_number)
+
     # Add and fill in the label of the new event
     label = document.getElementById(f"event_label_{event_number}")
     label.setAttribute("x", str(screen_x + 10))
-    label.setAttribute("y", str(screen_y - 10))
+    label.setAttribute("y", str(screen_y + 10))
 
 def update_all_event_positions():
     points = document.querySelectorAll("[id^='event_point_']")
@@ -467,6 +608,13 @@ def remove_event(event_number):
     label = document.getElementById(f"event_label_{event_number}")
     if label is not None:
         label.remove()
+
+    # Remove the lightcones (if present)
+    remove_lightcones(event_number)
+
+    # Remove worldline through event (if present)
+    remove_worldline(event_number)
+
 
 # Generate an input-box in the HTML
 def make_input(id, type="number", width="60px", placeholder=""):
@@ -584,10 +732,8 @@ def add_event(event=None):
     # Create SVG dot and insert into HTML
     event_point = document.createElementNS("http://www.w3.org/2000/svg","circle")
     event_point.id = f"event_point_{event_counter}"
-
     event_point.setAttribute("r", "6")
     event_point.setAttribute("fill", "yellow")
-
     event_layer = document.getElementById("event_layer")
     event_layer.appendChild(event_point)
 
@@ -597,8 +743,43 @@ def add_event(event=None):
     event_label.textContent = f"E{event_counter}"
     event_label.setAttribute("fill", "yellow")
     event_label.setAttribute("font-size", "16")
-
     event_layer.appendChild(event_label)
+
+    # Create 'show lightcone' checkbox & label container space
+    lightcone_checkbox_container = document.createElement("div")
+
+    lightcone_checkbox = document.createElement("input")
+    lightcone_checkbox.type = "checkbox"
+    lightcone_checkbox.id = f"lightcone_checkbox_{event_counter}"
+
+    lightcone_checkbox.onchange = handle_lightcone_checkbox
+
+    lightcone_checkbox_label = document.createElement("label")
+    lightcone_checkbox_label.setAttribute("for", f"lightcone_checkbox_{event_counter}")
+    lightcone_checkbox_label.innerText = "Show lightcone"
+
+    lightcone_checkbox_container.appendChild(lightcone_checkbox)
+    lightcone_checkbox_container.appendChild(lightcone_checkbox_label)
+
+    new_event.appendChild(lightcone_checkbox_container)
+
+    # Create 'worldline' checkbox & label container space
+    worldline_checkbox_container = document.createElement("div")
+
+    worldline_checkbox = document.createElement("input")
+    worldline_checkbox.type = "checkbox"
+    worldline_checkbox.id = f"worldline_checkbox_{event_counter}"
+
+    worldline_checkbox.onchange = handle_worldline_checkbox
+
+    worldline_checkbox_label = document.createElement("label")
+    worldline_checkbox_label.setAttribute("for", f"worldline_checkbox_{event_counter}")
+    worldline_checkbox_label.innerText = "Show worldline"
+
+    worldline_checkbox_container.appendChild(worldline_checkbox)
+    worldline_checkbox_container.appendChild(worldline_checkbox_label)
+
+    new_event.appendChild(worldline_checkbox_container)
 
     # Create 'Remove Event' button
     remove_button = document.createElement("button")
@@ -610,22 +791,21 @@ def add_event(event=None):
     # Append the entire event to the container space
     container.appendChild(new_event)
 
-# Run functions to create tickmarks and labels once.
-create_tick_marks("static_axes_tick", "black")
-create_tick_marks("tick_A", "red")
-create_tick_marks("tick_B", "green")
-create_tick_marks("tick_C", "blue")
+# Run all relevant functions
+def init():
+    create_tick_marks("static_y_axis_tick", "black")
+    create_tick_marks("static_x_axis_tick", "black")
+    create_tick_marks("tick_A", "red")
+    create_tick_marks("tick_B", "green")
+    create_tick_marks("tick_C", "blue")
 
-create_axis_label("label_A", "A", "red")
-create_axis_label("label_B", "B", "green")
-create_axis_label("label_C", "C", "blue")
+    create_axis_label("label_A", "A", "red")
+    create_axis_label("label_B", "B", "green")
+    create_axis_label("label_C", "C", "blue")
 
+    create_static_grid()
+    update_lab_frame()
+    update_velocities()
 
+init()
 
-create_static_grid()
-update_lab_frame()
-update_velocities()
-
-### FUTURE OBJECTIVES ###
-# Add toggleable gridlines
-# Make diagram more aesthetically pleasing

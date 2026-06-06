@@ -1,174 +1,206 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>MDV tool</title>
-    <link rel="stylesheet" href="pretty.css">
-    <script type="module" src="https://pyscript.net/releases/2026.3.1/core.js"></script>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width,initial-scale=1" />
+      <title>MDV tool</title>
+      <link rel="stylesheet" href="pretty.css">
+      <script type="module" src="https://pyscript.net/releases/2026.3.1/core.js"></script>
   </head>
 
   <body>
 
     <script type="py" src="./main.py"></script>
 
-    <div class="app-shell">
+    <div class="layout">
 
       <div class="controls">
 
-        <div class="panel-section">
-          <span class="section-label">Reference frames</span>
-          <div class="frames-track">
+        <!-- Velocity inputs & displays -->
 
-            <div class="frame-row">
-              <div class="frame-row-head">
-                <span class="frame-dot a"></span>
-                <span class="frame-name a">A</span>
-              </div>
-              <input class="frame-velocity-input" id="velocity_A" type="number" step="0.01" value="0" py-input="update_velocities">
-              <span class="frame-velocity-display" id="velocity_A_display">vA = 0.00c</span>
-              <label class="frame-grid-toggle">
-                <input type="checkbox" id="gridlines_A" name="gridlines_A" value="on">
-                <span>gridlines</span>
-              </label>
-            </div>
+        <label>Frame A velocity:</label>
+        <input id="velocity_A" type="number" step="0.01" value="0" py-input="update_velocities">
 
-            <div class="frame-row">
-              <div class="frame-row-head">
-                <span class="frame-dot b"></span>
-                <span class="frame-name b">B</span>
-              </div>
-              <input class="frame-velocity-input" id="velocity_B" type="number" step="0.01" value="0" py-input="update_velocities">
-              <span class="frame-velocity-display" id="velocity_B_display">vB = 0.00c</span>
-              <label class="frame-grid-toggle">
-                <input type="checkbox" id="gridlines_B" name="gridlines_B" value="on">
-                <span>gridlines</span>
-              </label>
-            </div>
+        <!-- Grid checkbox A -->
+        <input type="checkbox" id="checkbox_A" py-change="handle_checkbox">
+        <label for="checkbox_A"> Show gridlines</label><br>
 
-            <div class="frame-row">
-              <div class="frame-row-head">
-                <span class="frame-dot c"></span>
-                <span class="frame-name c">C</span>
-              </div>
-              <input class="frame-velocity-input" id="velocity_C" type="number" step="0.01" value="0" py-input="update_velocities">
-              <span class="frame-velocity-display" id="velocity_C_display">vC = 0.00c</span>
-              <label class="frame-grid-toggle">
-                <input type="checkbox" id="gridlines_C" name="gridlines_C" value="on">
-                <span>gridlines</span>
-              </label>
-            </div>
+        <br>
 
-          </div>
-        </div>
+        <label>Frame B velocity:</label>
+        <input id="velocity_B" type="number" step="0.01" value="0" py-input="update_velocities">
 
-        <div class="events-section">
-          <div class="events-header">
-            <span class="section-label">Events</span>
-            <button py-click="add_event" aria-label="Add event"></button>
-          </div>
-          <div id="event_container"></div>
-        </div>
+        <!-- Grid checkbox B -->
+        <input type="checkbox" id="checkbox_B" py-change="handle_checkbox">
+        <label for="checkbox_B"> Show gridlines</label><br>
 
-        <div class="slider-section">
-          <div class="slider-header">
-            <span class="section-label">Frame transition</span>
-            <span class="slider-value" id="lab_velocity_display">0.00c</span>
-          </div>
-          <div class="slider-track">
-            <div class="slider-track-bg"></div>
-            <input id="lab_velocity_slider" type="range" min="-0.99" max="0.99" step="0.01" value="0" py-input="update_lab_frame">
-          </div>
-          <div class="slider-ends">
-            <span class="slider-end-label">&minus;1</span>
-            <span class="slider-end-label">1</span>
-          </div>
-        </div>
+        <br>
+
+        <label>Frame C velocity:</label>
+        <input id="velocity_C" type="number" step="0.01" value="0" py-input="update_velocities">
+
+        <!-- Grid checkbox -->
+        <input type="checkbox" id="checkbox_C" py-change="handle_checkbox">
+        <label for="checkbox_C"> Show gridlines</label><br>
+
+        <br>
+
+        <label>Transition between frames:</label>
+
+        <input
+            id="lab_velocity_slider"
+            type="range"
+            min="-0.99"
+            max="0.99"
+            step="0.01"
+            value="0"
+            py-input="update_lab_frame"
+          >
+
+        <br>
+        
+        <div id="event_container"></div>
+        <button py-click="add_event">Add event</button>
+
+        <br>
+
+        <p id="result"></p>
 
       </div>
+
+      <!-- Diagram plotting -->
 
       <div class="diagram-section">
 
-        <div class="view-buttons">
-          <button py-click="view_A">A</button>
-          <button py-click="view_B">B</button>
-          <button py-click="view_C">C</button>
-          <button py-click="view_lab">Observer</button>
-        </div>
+        <svg
+          id="diagram"
+          width="1050"
+          height="1250"
+          viewBox="0 0 1150 1300"
+          >
 
-        <svg id="diagram" width="1050" height="700" viewBox="0 0 1100 750">
-
+          <!-- Background elements -->
           <g id="background_layer">
-            <line x1="525" y1="600" x2="0" y2="75" stroke="black" />
-            <line x1="525" y1="600" x2="1050" y2="75" stroke="black" />
-            <line x1="525" y1="0" x2="525" y2="600" stroke="black" />
+
+            <!-- Lightcone negative -->
+            <line
+              x1="1050"
+              y1="1125"
+              x2="0"
+              y2="75"
+              stroke="black"/>
+
+            <!-- Lightcone positive -->
+            <line
+              x1="0"
+              y1="1125"
+              x2="1050"
+              y2="75"
+              stroke="black"/>
+
+            <!-- Vertical line -->
+            <line
+              x1="525"
+              y1="0"
+              x2="525"
+              y2="1200"
+              stroke="black"/>
+            
+            <!-- Horizontal line -->
+            <line
+              x1="0"
+              y1="600"
+              x2="1050"
+              y2="600"
+              stroke="black"/>
+
+          </g>
+          
+          <!-- Grid lines -->
+          <g id="grid_layer">
           </g>
 
-          <g id="grid_layer"></g>
-
+          <!-- Axes and ticks -->
           <g id="axis_layer">
-            <line id="t_axis_prime_A" x1="300" y1="600" x2="300" y2="0" stroke="red" />
-            <line id="t_axis_prime_B" x1="300" y1="600" x2="300" y2="0" stroke="green" />
-            <line id="t_axis_prime_C" x1="300" y1="600" x2="300" y2="0" stroke="blue" />
-            <text id="label_ct_axis" x="545" y="15" fill="black" font-size="18">ct</text>
+
+             <!-- Worldines of the 3 frames --> 
+
+            <line
+              id="t_axis_prime_A"
+              x1="300"
+              y1="600"
+              x2="300"
+              y2="0"
+              stroke="red"
+            />
+
+            <line
+              id="t_axis_prime_B"
+              x1="300"
+              y1="600"
+              x2="300"
+              y2="0"
+              stroke="green"
+            />
+
+            <line
+              id="t_axis_prime_C"
+              x1="300"
+              y1="600"
+              x2="300"
+              y2="0"
+              stroke="blue"
+            />
+
+            <text id="label_ct_axis"
+              x="545"
+              y="15"
+              fill="black"
+              font-size="18">ct
+            </text>
+
+            <text id="label_x_axis"
+              x="1030"
+              y="625"
+              fill="black"
+              font-size="18">x
+            </text>            
+
+          </g>
+          
+          <!-- Projection layer -->
+          <g id="projection_layer">
           </g>
 
-          <g id="event_layer"></g>
+          <!-- Event dots -->
+          <g id="event_layer">
 
-          <g id="label_layer"></g>
+          </g>
+          
+          <!-- Labels -->
+          <g id="label_layer">
+          </g>
 
         </svg>
+        
+        <!--Viewpoint switch buttons-->
+        <div class="view-buttons">
+
+          <button py-click="view_A">View A</button>
+          <button py-click="view_B">View B</button>
+          <button py-click="view_C">View C</button>
+          <button py-click="view_lab">View Observer</button>
+
+        </div>
 
       </div>
 
     </div>
 
-    <div class="scroll-page">
+    
 
-      <nav class="scroll-nav">
-        <a class="active" onclick="showTab('tab-main', this)">Main</a>
-        <a onclick="showTab('tab-explanation', this)">Explanation</a>
-        <a onclick="showTab('tab-about', this)">About</a>
-      </nav>
 
-      <div class="tab-panel active" id="tab-main">
-        <div class="section-content">
-          <h2>Main</h2>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-          <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        </div>
-      </div>
-
-      <div class="tab-panel" id="tab-explanation">
-        <div class="section-content">
-          <h2>Explanation</h2>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-          <div class="math-block">t&prime; = &gamma; (t &minus; &beta;x)<br>x&prime; = &gamma; (x &minus; &beta;t)<br>&gamma; = 1 / &radic;(1 &minus; &beta;&sup2;)</div>
-          <p>Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur.</p>
-        </div>
-      </div>
-
-      <div class="tab-panel" id="tab-about">
-        <div class="section-content">
-          <h2>About</h2>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores.</p>
-        </div>
-      </div>
-
-      <div class="credits">
-        <div class="ack-text">paste acknowledgements</div>
-      </div>
-
-    </div>
-
-    <script>
-      function showTab(id, link) {
-        document.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.remove('active'); });
-        document.querySelectorAll('.scroll-nav a').forEach(function (a) { a.classList.remove('active'); });
-        document.getElementById(id).classList.add('active');
-        link.classList.add('active');
-      }
-    </script>
 
   </body>
 </html>
+
