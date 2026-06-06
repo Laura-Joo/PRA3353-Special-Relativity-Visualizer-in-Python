@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width,initial-scale=1" />
+      <title>MDV tool</title>
+      <link rel="stylesheet" href="pretty.css">
+      <script type="module" src="https://pyscript.net/releases/2026.3.1/core.js"></script>
+  </head>
+
+  <body>
+
+    <script type="py" src="./main.py"></script>
+
+    <div class="layout">
+
+      <div class="controls">
+
+        <!-- Velocity inputs & displays -->
+
+        <label>Frame A velocity:</label>
+        <input id="velocity_A" type="number" step="0.01" value="0" py-input="update_velocities">
+
+        <!-- Grid checkbox A -->
+        <input type="checkbox" id="checkbox_A" py-change="handle_checkbox">
+        <label for="checkbox_A"> Show gridlines</label><br>
+
+        <br>
+
+        <label>Frame B velocity:</label>
+        <input id="velocity_B" type="number" step="0.01" value="0" py-input="update_velocities">
+
+        <!-- Grid checkbox B -->
+        <input type="checkbox" id="checkbox_B" py-change="handle_checkbox">
+        <label for="checkbox_B"> Show gridlines</label><br>
+
+        <br>
+
+        <label>Frame C velocity:</label>
+        <input id="velocity_C" type="number" step="0.01" value="0" py-input="update_velocities">
+
+        <!-- Grid checkbox -->
+        <input type="checkbox" id="checkbox_C" py-change="handle_checkbox">
+        <label for="checkbox_C"> Show gridlines</label><br>
+
+        <br>
+
+        <label>Transition between frames:</label>
+
+        <input
+            id="lab_velocity_slider"
+            type="range"
+            min="-0.99"
+            max="0.99"
+            step="0.01"
+            value="0"
+            py-input="update_lab_frame"
+          >
+
+        <br>
+        
+        <div id="event_container"></div>
+        <button py-click="add_event">Add event</button>
+
+        <br>
+
+        <p id="result"></p>
+
+      </div>
+
+      <!-- Diagram plotting -->
+
+      <div class="diagram-section">
+
+        <svg
+          id="diagram"
+          width="1050"
+          height="1250"
+          viewBox="0 0 1100 1300"
+          >
+
+          <!-- Background elements -->
+          <g id="background_layer">
+
+            <!-- Lightcone negative -->
+            <line
+              x1="1050"
+              y1="1125"
+              x2="0"
+              y2="75"
+              stroke="black"/>
+
+            <!-- Lightcone positive -->
+            <line
+              x1="0"
+              y1="1125"
+              x2="1050"
+              y2="75"
+              stroke="black"/>
+
+            <!-- Vertical line -->
+            <line
+              x1="525"
+              y1="0"
+              x2="525"
+              y2="1200"
+              stroke="black"/>
+            
+            <!-- Horizontal line -->
+            <line
+              x1="0"
+              y1="600"
+              x2="1050"
+              y2="600"
+              stroke="black"/>
+
+          </g>
+          
+          <!-- Grid lines -->
+          <g id="grid_layer">
+          </g>
+
+          <!-- Axes and ticks -->
+          <g id="axis_layer">
+
+             <!-- Worldines of the 3 frames --> 
+
+            <line
+              id="t_axis_prime_A"
+              x1="300"
+              y1="600"
+              x2="300"
+              y2="0"
+              stroke="red"
+            />
+
+            <line
+              id="t_axis_prime_B"
+              x1="300"
+              y1="600"
+              x2="300"
+              y2="0"
+              stroke="green"
+            />
+
+            <line
+              id="t_axis_prime_C"
+              x1="300"
+              y1="600"
+              x2="300"
+              y2="0"
+              stroke="blue"
+            />
+
+            <text id="label_ct_axis"
+              x="545"
+              y="15"
+              fill="black"
+              font-size="18">ct
+            </text>
+
+            <text id="label_x_axis"
+              x="1030"
+              y="625"
+              fill="black"
+              font-size="18">x
+            </text>            
+
+          </g>
+          
+          <!-- Projection layer -->
+          <g id="projection_layer">
+          </g>
+
+          <!-- Event dots -->
+          <g id="event_layer">
+
+          </g>
+          
+          <!-- Labels -->
+          <g id="label_layer">
+          </g>
+
+        </svg>
+        
+        <!--Viewpoint switch buttons-->
+        <div class="view-buttons">
+
+          <button py-click="view_A">View A</button>
+          <button py-click="view_B">View B</button>
+          <button py-click="view_C">View C</button>
+          <button py-click="view_lab">View Observer</button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    
+
+
+
+  </body>
+</html>
+
