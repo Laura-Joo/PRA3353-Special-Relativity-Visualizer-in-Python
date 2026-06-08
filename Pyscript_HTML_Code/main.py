@@ -81,6 +81,23 @@ add_frame_to_total(Frame_C)
 
 ### GENERAL FUNCTIONS ###
 
+def clamp_velocity(event):
+
+    inputbox = event.target
+
+    try:
+        value = float(inputbox.value)
+    except:
+        inputbox.value = "0"
+        return
+    
+    value = max(-0.99, min(0.99, value))
+    inputbox.value = str(value)
+
+    update_velocities(event)
+
+
+
 # Retrieve velocity inputs from entered values
 def sync_frame_velocities():
     Frame_A.velocity = float(document.getElementById("velocity_A").value or 0)
@@ -312,7 +329,7 @@ def draw_worldline(event_number):
 
     worldline = document.createElementNS("http://www.w3.org/2000/svg","line")
     worldline.id = f"worldline_{event_number}"
-    worldline.setAttribute("stroke", "yellow")
+    worldline.setAttribute("stroke", "orange")
 
     worldline.setAttribute("x1", str(screen_x1))
     worldline.setAttribute("y1", str(screen_y1))
@@ -390,9 +407,9 @@ def update_velocities(event=None):
 
     sync_frame_velocities()
 
-    document.getElementById("velocity_A_display").innerText = f"vA = {Frame_A.velocity:.2f}c"
-    document.getElementById("velocity_B_display").innerText = f"vB = {Frame_B.velocity:.2f}c"
-    document.getElementById("velocity_C_display").innerText = f"vC = {Frame_C.velocity:.2f}c"
+    document.getElementById("velocity_A_display").innerText = f"vA = {relative_velocity(lab_frame_velocity,Frame_A.velocity):.2f}c"
+    document.getElementById("velocity_B_display").innerText = f"vB = {relative_velocity(lab_frame_velocity,Frame_B.velocity):.2f}c"
+    document.getElementById("velocity_C_display").innerText = f"vC = {relative_velocity(lab_frame_velocity,Frame_C.velocity):.2f}c"
 
     update_t_axes() # Draw axes with ticks on them
     update_all_event_positions() # Red event dots updating
@@ -407,6 +424,7 @@ def update_lab_frame(event=None):
     
     document.getElementById("lab_velocity_display").innerText = f"{lab_frame_velocity:.2f}c"
 
+    update_velocities()
     update_t_axes()
     update_all_event_positions()
 
@@ -486,18 +504,22 @@ def set_view_velocity(v):
 
 def view_A(event=None):
     set_view_velocity(Frame_A.velocity)
+    update_velocities()
     update_all_event_positions()
 
 def view_B(event=None):
     set_view_velocity(Frame_B.velocity)
+    update_velocities()
     update_all_event_positions()
 
 def view_C(event=None):
     set_view_velocity(Frame_C.velocity)
+    update_velocities()
     update_all_event_positions()
 
 def view_lab(event=None):
     set_view_velocity(0.0)
+    update_velocities()
     update_all_event_positions()
 
 
@@ -733,7 +755,7 @@ def add_event(event=None):
     event_point = document.createElementNS("http://www.w3.org/2000/svg","circle")
     event_point.id = f"event_point_{event_counter}"
     event_point.setAttribute("r", "6")
-    event_point.setAttribute("fill", "yellow")
+    event_point.setAttribute("fill", "orange")
     event_layer = document.getElementById("event_layer")
     event_layer.appendChild(event_point)
 
@@ -741,7 +763,7 @@ def add_event(event=None):
     event_label = document.createElementNS("http://www.w3.org/2000/svg","text")
     event_label.id = f"event_label_{event_counter}"
     event_label.textContent = f"E{event_counter}"
-    event_label.setAttribute("fill", "yellow")
+    event_label.setAttribute("fill", "orange")
     event_label.setAttribute("font-size", "16")
     event_layer.appendChild(event_label)
 

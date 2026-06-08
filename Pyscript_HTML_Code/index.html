@@ -25,12 +25,15 @@
                 <span class="frame-dot a"></span>
                 <span class="frame-name a">A</span>
               </div>
+
+              <!-- Velocity A display -->
               <input class="frame-velocity-input" id="velocity_A" type="number" step="0.01" value="0" py-input="update_velocities">
               <span class="frame-velocity-display" id="velocity_A_display">vA = 0.00c</span>
               <label class="frame-grid-toggle">
                 <input type="checkbox" id="gridlines_A" name="gridlines_A" value="on">
                 <span>gridlines</span>
               </label>
+
             </div>
 
             <div class="frame-row">
@@ -38,12 +41,15 @@
                 <span class="frame-dot b"></span>
                 <span class="frame-name b">B</span>
               </div>
+
+              <!-- Velocity B display -->
               <input class="frame-velocity-input" id="velocity_B" type="number" step="0.01" value="0" py-input="update_velocities">
               <span class="frame-velocity-display" id="velocity_B_display">vB = 0.00c</span>
               <label class="frame-grid-toggle">
                 <input type="checkbox" id="gridlines_B" name="gridlines_B" value="on">
                 <span>gridlines</span>
               </label>
+
             </div>
 
             <div class="frame-row">
@@ -51,12 +57,15 @@
                 <span class="frame-dot c"></span>
                 <span class="frame-name c">C</span>
               </div>
+
+              <!-- Velocity C display -->
               <input class="frame-velocity-input" id="velocity_C" type="number" step="0.01" value="0" py-input="update_velocities">
               <span class="frame-velocity-display" id="velocity_C_display">vC = 0.00c</span>
               <label class="frame-grid-toggle">
                 <input type="checkbox" id="gridlines_C" name="gridlines_C" value="on">
                 <span>gridlines</span>
               </label>
+
             </div>
 
           </div>
@@ -96,12 +105,20 @@
           <button py-click="view_lab">Observer</button>
         </div>
 
-        <svg id="diagram" width="1050" height="700" viewBox="0 0 1100 750">
+        <svg id="diagram" width="1050" height="1250" viewBox="0 0 1100 750">
 
           <g id="background_layer">
+            <!-- Lightcone negative -->
             <line x1="525" y1="600" x2="0" y2="75" stroke="black" />
+            
+            <!-- Lightcone positive -->
             <line x1="525" y1="600" x2="1050" y2="75" stroke="black" />
-            <line x1="525" y1="0" x2="525" y2="600" stroke="black" />
+            
+            <!-- Vertical line -->
+            <line x1="525" y1="0" x2="525" y2="1200" stroke="black" />
+          
+            <!-- Horizontal line -->
+            <line x1="0" y1="600" x2="1050" y2="600" stroke="black" />
           </g>
 
           <g id="grid_layer"></g>
