@@ -30,7 +30,7 @@
               <input class="frame-velocity-input" id="velocity_A" type="number" step="0.01" value="0" py-input="update_velocities">
               <span class="frame-velocity-display" id="velocity_A_display">vA = 0.00c</span>
               <label class="frame-grid-toggle">
-                <input type="checkbox" id="gridlines_A" name="gridlines_A" value="on">
+                <input type="checkbox" id="gridlines_A" name="gridlines_A" value="on" py-change="handle_grid_A_checkbox">
                 <span>gridlines</span>
               </label>
 
@@ -46,7 +46,7 @@
               <input class="frame-velocity-input" id="velocity_B" type="number" step="0.01" value="0" py-input="update_velocities">
               <span class="frame-velocity-display" id="velocity_B_display">vB = 0.00c</span>
               <label class="frame-grid-toggle">
-                <input type="checkbox" id="gridlines_B" name="gridlines_B" value="on">
+                <input type="checkbox" id="gridlines_B" name="gridlines_B" value="on" py-change="handle_grid_B_checkbox">
                 <span>gridlines</span>
               </label>
 
@@ -62,7 +62,7 @@
               <input class="frame-velocity-input" id="velocity_C" type="number" step="0.01" value="0" py-input="update_velocities">
               <span class="frame-velocity-display" id="velocity_C_display">vC = 0.00c</span>
               <label class="frame-grid-toggle">
-                <input type="checkbox" id="gridlines_C" name="gridlines_C" value="on">
+                <input type="checkbox" id="gridlines_C" name="gridlines_C" value="on" py-change="handle_grid_C_checkbox">
                 <span>gridlines</span>
               </label>
 
@@ -105,34 +105,44 @@
           <button py-click="view_lab">Observer</button>
         </div>
 
-        <svg id="diagram" width="1050" height="1250" viewBox="0 0 1100 750">
+        <svg id="diagram" width="1050" height="750" viewBox="0 0 1050 750">
 
-          <g id="background_layer">
-            <!-- Lightcone negative -->
-            <line x1="525" y1="600" x2="0" y2="75" stroke="black" />
+            <defs>
+              <clipPath id="diagram_clip">
+                <rect x="0" y="0" width="1050" height="750" />
+              </clipPath>
+            </defs>
+
+          <g clip-path="url(#diagram_clip)">
+
+            <g id="background_layer">
+              <!-- Lightcone negative -->
+              <line x1="525" y1="600" x2="0" y2="75" stroke="black" />
+              
+              <!-- Lightcone positive -->
+              <line x1="525" y1="600" x2="1050" y2="75" stroke="black" />
+              
+              <!-- Vertical line -->
+              <line x1="525" y1="0" x2="525" y2="1200" stroke="black" />
             
-            <!-- Lightcone positive -->
-            <line x1="525" y1="600" x2="1050" y2="75" stroke="black" />
-            
-            <!-- Vertical line -->
-            <line x1="525" y1="0" x2="525" y2="1200" stroke="black" />
-          
-            <!-- Horizontal line -->
-            <line x1="0" y1="600" x2="1050" y2="600" stroke="black" />
+              <!-- Horizontal line -->
+              <line x1="0" y1="600" x2="1050" y2="600" stroke="black" />
+            </g>
+
+            <g id="grid_layer"></g>
+
+            <g id="axis_layer">
+              <line id="t_axis_prime_A" x1="300" y1="600" x2="300" y2="0" stroke="red" />
+              <line id="t_axis_prime_B" x1="300" y1="600" x2="300" y2="0" stroke="green" />
+              <line id="t_axis_prime_C" x1="300" y1="600" x2="300" y2="0" stroke="blue" />
+              <text id="label_ct_axis" x="545" y="15" fill="black" font-size="18">ct</text>
+            </g>
+
+            <g id="event_layer"></g>
+
+            <g id="label_layer"></g>
+
           </g>
-
-          <g id="grid_layer"></g>
-
-          <g id="axis_layer">
-            <line id="t_axis_prime_A" x1="300" y1="600" x2="300" y2="0" stroke="red" />
-            <line id="t_axis_prime_B" x1="300" y1="600" x2="300" y2="0" stroke="green" />
-            <line id="t_axis_prime_C" x1="300" y1="600" x2="300" y2="0" stroke="blue" />
-            <text id="label_ct_axis" x="545" y="15" fill="black" font-size="18">ct</text>
-          </g>
-
-          <g id="event_layer"></g>
-
-          <g id="label_layer"></g>
 
         </svg>
 

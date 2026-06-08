@@ -15,11 +15,14 @@ tick_size = 10
 static_axes_tick_size = 5
 LIGHTCONE_SCALE = 70
 worldline_length = 50
+grid_count = 100
+
+general_scale = 2
 
 def spacetime_to_screen(x, t):
 
-    screen_x = ORIGIN_X + x * SCALE
-    screen_y = ORIGIN_Y - t * SCALE
+    screen_x = ORIGIN_X + general_scale*x * SCALE
+    screen_y = ORIGIN_Y - general_scale*t * SCALE
 
     return (screen_x, screen_y)
 
@@ -55,11 +58,12 @@ def lorentz_transform(t, x, v):
 class Frame:
     next_id = 0
     
-    def __init__(self, name: str, velocity: float):
+    def __init__(self, name: str, color: str, velocity: float):
         self.id = Frame.next_id
         Frame.next_id += 1
         
         self.name = name
+        self.color = color
         self.velocity = velocity
     
     def __repr__(self):
@@ -68,11 +72,11 @@ class Frame:
 # Creating Frame objects & adding to array collection
 
 lab_frame_velocity = 0.0
-Lab_Frame = Frame("Observer", 0.0)
+Lab_Frame = Frame("Observer", "black", 0.0)
 
-Frame_A = Frame("A", 0.0)
-Frame_B = Frame("B", 0.0)
-Frame_C = Frame("C", 0.0)
+Frame_A = Frame("A", "red", 0.0)
+Frame_B = Frame("B", "green", 0.0)
+Frame_C = Frame("C", "blue", 0.0)
 
 add_frame_to_total(Lab_Frame)
 add_frame_to_total(Frame_A)
@@ -95,8 +99,6 @@ def clamp_velocity(event):
     inputbox.value = str(value)
 
     update_velocities(event)
-
-
 
 # Retrieve velocity inputs from entered values
 def sync_frame_velocities():
@@ -126,11 +128,11 @@ def t_line_creator(v: float, line_id: str):
     line.setAttribute("y2", str(screen_y2))
 
 # Create ticks on t-axes
-def create_tick_marks(prefix, color="black"):
+def create_tick_marks(prefix, amount, color="black"):
 
     tick_layer = document.getElementById("axis_layer")
 
-    for i in range(-amount_of_t_ticks, amount_of_t_ticks + 1):
+    for i in range(-amount, amount + 1):
 
         tick = document.createElementNS("http://www.w3.org/2000/svg","line")
         tick.id = f"{prefix}_{i}"
@@ -221,6 +223,169 @@ def draw_t_ticks(v: float, prefix: str):
         tick.setAttribute("y1", str(y1))
         tick.setAttribute("x2", str(x2))
         tick.setAttribute("y2", str(y2))
+
+# Create static gridlines
+def create_static_grid():
+    grid_layer = document.getElementById("grid_layer")
+
+    # Vertical lines
+    # (x_min, x_max)
+    for i in range(-30, 27):
+
+        line = document.createElementNS("http://www.w3.org/2000/svg","line")
+
+        line.id = f"grid_x_{i}"
+
+        x, y1 = spacetime_to_screen(i, -30)
+        x, y2 = spacetime_to_screen(i, 30)
+
+        line.setAttribute("x1", str(x))
+        line.setAttribute("y1", str(y1))
+        line.setAttribute("x2", str(x))
+        line.setAttribute("y2", str(y2))
+
+        line.setAttribute("stroke", "black")
+        line.setAttribute("stroke-width", "1")
+        line.setAttribute("opacity", "0.2")
+
+        grid_layer.appendChild(line)
+
+    # Horizontal lines
+    # (y_min, y_max)
+    for i in range(-30, 31):
+
+        line = document.createElementNS("http://www.w3.org/2000/svg","line")
+
+        x1, y = spacetime_to_screen(-30, i)
+        x2, y = spacetime_to_screen(27, i)
+
+        line.setAttribute("x1", str(x1))
+        line.setAttribute("y1", str(y))
+        line.setAttribute("x2", str(x2))
+        line.setAttribute("y2", str(y))
+
+        line.setAttribute("stroke", "black")
+        line.setAttribute("stroke-width", "1")
+        line.setAttribute("opacity", "0.2")
+
+        grid_layer.appendChild(line)       
+
+def draw_t_grid(frame):
+
+    remove_t_grid(frame)
+
+    v = relative_velocity(lab_frame_velocity, frame.velocity)
+    gamma = gamma_factor(v)
+
+    for i in range(-grid_count, grid_count + 1):
+        
+        translation = i / gamma
+        
+        x1 = -v * axis_length + translation
+        t1 = -axis_length
+
+        x2 = v * axis_length + translation
+        t2 = axis_length
+
+        screen_x1, screen_y1 = spacetime_to_screen(x1, t1)
+        screen_x2, screen_y2 = spacetime_to_screen(x2, t2)
+
+        t_line = document.createElementNS("http://www.w3.org/2000/svg","line")
+        t_line.id = f"t_line_{frame.name}_{i}"
+
+        t_line.setAttribute("x1", str(screen_x1))
+        t_line.setAttribute("y1", str(screen_y1))
+        t_line.setAttribute("x2", str(screen_x2))
+        t_line.setAttribute("y2", str(screen_y2))
+        t_line.setAttribute("stroke", f"{frame.color}")
+        t_line.setAttribute("opacity", "0.5")
+
+        grid_layer = document.getElementById("grid_layer")
+        grid_layer.appendChild(t_line)
+
+def remove_t_grid(frame):
+    for i in range(-grid_count, grid_count + 1):
+        t_line = document.getElementById(f"t_line_{frame.name}_{i}")
+        if not t_line:
+            continue
+        t_line.remove() 
+
+def draw_x_grid(frame):
+
+    remove_x_grid(frame)
+
+    v = relative_velocity(lab_frame_velocity, frame.velocity)
+    gamma = gamma_factor(v)
+
+    for i in range(-grid_count, grid_count + 1):
+        
+        translation = i / gamma
+
+        x1 = -axis_length / v
+        t1 = -axis_length + translation
+
+        x2 = axis_length / v
+        t2 = axis_length + translation
+
+        screen_x1, screen_y1 = spacetime_to_screen(x1, t1)
+        screen_x2, screen_y2 = spacetime_to_screen(x2, t2)
+
+        x_line = document.createElementNS("http://www.w3.org/2000/svg","line")
+        x_line.id = f"x_line_{frame.name}_{i}"
+
+        x_line.setAttribute("x1", str(screen_x1))
+        x_line.setAttribute("y1", str(screen_y1))
+        x_line.setAttribute("x2", str(screen_x2))
+        x_line.setAttribute("y2", str(screen_y2))
+        x_line.setAttribute("stroke", f"{frame.color}")
+        x_line.setAttribute("opacity", "0.5")
+
+        if i == 0:
+            x_line.setAttribute("opacity", "1")
+
+        grid_layer = document.getElementById("grid_layer")
+        grid_layer.appendChild(x_line)
+
+def remove_x_grid(frame):
+    for i in range(-grid_count, grid_count + 1):
+        x_line = document.getElementById(f"x_line_{frame.name}_{i}")
+        if not x_line:
+            continue
+        x_line.remove() 
+
+
+def handle_grid_A_checkbox(event):
+
+    checkbox = event.target
+
+    if checkbox.checked:
+        draw_t_grid(Frame_A)
+        draw_x_grid(Frame_A)
+    else:
+        remove_t_grid(Frame_A)
+        remove_x_grid(Frame_A)
+
+def handle_grid_B_checkbox(event):
+
+    checkbox = event.target
+
+    if checkbox.checked:
+        draw_t_grid(Frame_B)
+        draw_x_grid(Frame_B)
+    else:
+        remove_t_grid(Frame_B)
+        remove_x_grid(Frame_B)
+
+def handle_grid_C_checkbox(event):
+
+    checkbox = event.target
+
+    if checkbox.checked:
+        draw_t_grid(Frame_C)
+        draw_x_grid(Frame_C)
+    else:
+        remove_t_grid(Frame_C)
+        remove_x_grid(Frame_C)
 
 ### LIGHTCONE PER EVENT ###
 
@@ -349,7 +514,6 @@ def remove_worldline(event_number):
     
     worldline.remove()
 
-
 def handle_worldline_checkbox(event):
 
     checkbox = event.target
@@ -361,8 +525,6 @@ def handle_worldline_checkbox(event):
 
     else:
         remove_worldline(event_number)
-
-
 
 # Update the position of axes labels
 def update_axis_label(v, label_id):
@@ -414,6 +576,27 @@ def update_velocities(event=None):
     update_t_axes() # Draw axes with ticks on them
     update_all_event_positions() # Red event dots updating
 
+    checkbox_A = document.getElementById("gridlines_A") # Update gridlines when velocities change
+    if checkbox_A.checked:
+        remove_t_grid(Frame_A)
+        remove_x_grid(Frame_A)
+        draw_t_grid(Frame_A)
+        draw_x_grid(Frame_A)
+
+    checkbox_B = document.getElementById("gridlines_B") # Update gridlines when velocities change
+    if checkbox_B.checked:
+        remove_t_grid(Frame_B)
+        remove_x_grid(Frame_B)
+        draw_t_grid(Frame_B)
+        draw_x_grid(Frame_B)
+
+    checkbox_C = document.getElementById("gridlines_C") # Update gridlines when velocities change
+    if checkbox_C.checked:
+        remove_t_grid(Frame_C)
+        remove_x_grid(Frame_C)
+        draw_t_grid(Frame_C)
+        draw_x_grid(Frame_C)
+
 # Update axes when slider is adjusted
 def update_lab_frame(event=None):
 
@@ -440,52 +623,6 @@ def create_axis_label(label_id, text, color="black"):
     label.setAttribute("font-size", "20")
 
     axis_layer.appendChild(label)
-
-# Create static gridlines
-def create_static_grid():
-    grid_layer = document.getElementById("grid_layer")
-
-    # Vertical lines
-    # (x_min, x_max)
-    for i in range(-30, 27):
-
-        line = document.createElementNS("http://www.w3.org/2000/svg","line")
-
-        line.id = f"grid_x_{i}"
-
-        x, y1 = spacetime_to_screen(i, -30)
-        x, y2 = spacetime_to_screen(i, 30)
-
-        line.setAttribute("x1", str(x))
-        line.setAttribute("y1", str(y1))
-        line.setAttribute("x2", str(x))
-        line.setAttribute("y2", str(y2))
-
-        line.setAttribute("stroke", "black")
-        line.setAttribute("stroke-width", "1")
-        line.setAttribute("opacity", "0.2")
-
-        grid_layer.appendChild(line)
-
-    # Horizontal lines
-    # (y_min, y_max)
-    for i in range(-30, 31):
-
-        line = document.createElementNS("http://www.w3.org/2000/svg","line")
-
-        x1, y = spacetime_to_screen(-30, i)
-        x2, y = spacetime_to_screen(26, i)
-
-        line.setAttribute("x1", str(x1))
-        line.setAttribute("y1", str(y))
-        line.setAttribute("x2", str(x2))
-        line.setAttribute("y2", str(y))
-
-        line.setAttribute("stroke", "black")
-        line.setAttribute("stroke-width", "1")
-        line.setAttribute("opacity", "0.2")
-
-        grid_layer.appendChild(line)       
 
 ### VIEW ADJUSTING FUNCTIONS ###
 
@@ -796,11 +933,24 @@ def add_event(event=None):
 
     worldline_checkbox_label = document.createElement("label")
     worldline_checkbox_label.setAttribute("for", f"worldline_checkbox_{event_counter}")
-    worldline_checkbox_label.innerText = "Show worldline"
+    worldline_checkbox_label.innerText = "Show worldline "
+
+    container_tooltip = document.createElement("text")
+    container_tooltip.className = "tooltip-container"
+
+    symbol = document.createElement("text")
+    symbol.innerText = "ⓘ"
+
+    tooltip = document.createElement("div")
+    tooltip.className = "tooltip-text"
+    tooltip.innerText = "Please note: An event is a singular moment in spacetime (e.g. an exploding firecracker). By adding a worldline to the diagram, you are no longer looking at an event but at an object travelling through spacetime! The worldline is then the path the object travels with the set frame velocity."
+
+    container_tooltip.appendChild(symbol)
+    container_tooltip.appendChild(tooltip)
 
     worldline_checkbox_container.appendChild(worldline_checkbox)
     worldline_checkbox_container.appendChild(worldline_checkbox_label)
-
+    worldline_checkbox_container.appendChild(container_tooltip)
     new_event.appendChild(worldline_checkbox_container)
 
     # Create 'Remove Event' button
@@ -815,11 +965,12 @@ def add_event(event=None):
 
 # Run all relevant functions
 def init():
-    create_tick_marks("static_y_axis_tick", "black")
-    create_tick_marks("static_x_axis_tick", "black")
-    create_tick_marks("tick_A", "red")
-    create_tick_marks("tick_B", "green")
-    create_tick_marks("tick_C", "blue")
+    create_tick_marks("static_x_axis_tick", amount_of_t_ticks, "black")
+    create_tick_marks("static_y_axis_tick", amount_of_x_ticks, "black")
+
+    create_tick_marks("tick_A", amount_of_t_ticks, "red")
+    create_tick_marks("tick_B", amount_of_t_ticks, "green")
+    create_tick_marks("tick_C", amount_of_t_ticks, "blue")
 
     create_axis_label("label_A", "A", "red")
     create_axis_label("label_B", "B", "green")

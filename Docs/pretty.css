@@ -41,6 +41,30 @@ body {
   color-scheme: light;
 }
 
+/*  tooltip styling  */
+.tooltip-container {
+  position: relative;
+  cursor: help;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  background-color: white;
+  color: black;
+  padding: 6px;
+  border-radius: 6px;
+
+  position: absolute;
+  left: 20px;
+  top: 0;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+.tooltip-container:hover .tooltip-text {
+  visibility: visible;
+}
+
 
 /* column layout */
 
