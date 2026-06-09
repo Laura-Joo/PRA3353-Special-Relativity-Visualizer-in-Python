@@ -327,38 +327,64 @@ def remove_x_ticks(frame):
 
 def draw_projection(event_number, frame):
 
-    v = relative_velocity(lab_frame_velocity,frame.velocity)
+    ### LOOK INTO INPUT COORDINATE FRAME
+    v = relative_velocity(lab_frame_velocity, frame.velocity)
 
     point = document.getElementById(f"event_point_{event_number}")
     cx = float(point.getAttribute("cx"))
     cy = float(point.getAttribute("cy"))
 
-    # Take X-vector of eventpoint & translate to target frame
-    x_input = document.getElementById(f"x_{event_number}")
-    X_x, X_t = lorentz_transform(0,x_input,v)
-    screen_X_x, screen_X_t = spacetime_to_screen(X_x, X_t)
+    # Take X-vector of eventpoint
+    x_input = float(document.getElementById(f"x_{event_number}").value)
+
+    # Take T-vector of eventpoint
+    t_input = float(document.getElementById(f"t_{event_number}").value)
+
+    T, X = lorentz_transform(t_input, x_input, v)
+    proj_t, proj_x = lorentz_transform(T, 0, -v)
+    proj_t2, proj_x2 = lorentz_transform(0, X, -v)
+
+    screen_proj_x, screen_proj_t = spacetime_to_screen(proj_x, proj_t)
+    screen_proj_x2, screen_proj_t2 = spacetime_to_screen(proj_x2, proj_t2)
 
     x_projection = document.createElementNS("http://www.w3.org/2000/svg","line")
     x_projection.id = f"x_projection_{frame.name}_{event_number}"
     x_projection.setAttribute("stroke", f"{frame.color}")
     x_projection.setAttribute("stroke-dasharray", "2,2")
     x_projection.setAttribute("marker-end", "url(#arrow)")
+    x_projection.setAttribute("stroke", frame.color)
 
     x_projection.setAttribute("x1", str(cx))
     x_projection.setAttribute("y1", str(cy))
-    x_projection.setAttribute("x2", str(screen_X_x))
-    x_projection.setAttribute("y2", str(screen_X_t))
+    x_projection.setAttribute("x2", str(screen_proj_x))
+    x_projection.setAttribute("y2", str(screen_proj_t))
+
+    t_projection = document.createElementNS("http://www.w3.org/2000/svg","line")
+    t_projection.id = f"t_projection_{frame.name}_{event_number}"
+    t_projection.setAttribute("stroke", f"{frame.color}")
+    t_projection.setAttribute("stroke-dasharray", "2,2")
+    t_projection.setAttribute("marker-end", "url(#arrow)")
+    t_projection.setAttribute("stroke", frame.color)
+
+    t_projection.setAttribute("x1", str(cx))
+    t_projection.setAttribute("y1", str(cy))
+    t_projection.setAttribute("x2", str(screen_proj_x2))
+    t_projection.setAttribute("y2", str(screen_proj_t2))
 
     projection_layer = document.getElementById("projection_layer")
     projection_layer.appendChild(x_projection)
+    projection_layer.appendChild(t_projection)
 
-    # Take T-vector of eventpoint & translate to target frame
-    t_input = document.getElementById(f"t_{event_number}")
-    T_x, T_t = lorentz_transform(t_input,0,v)
+def remove_projection(event_number, frame):
+    x_projection = document.getElementById(f"x_projection_{frame.name}_{event_number}")
+    if not x_projection:
+        return
+    x_projection.remove()
 
-def remove_projection(frame):
-    
-    return
+    t_projection = document.getElementById(f"t_projection_{frame.name}_{event_number}")
+    if not t_projection:
+        return
+    t_projection.remove()
 
 # Create static gridlines
 def create_static_grid():
@@ -730,6 +756,21 @@ def update_t_axes(event=None):
     update_axis_label(velocity_B_in_view, "label_B")
     update_axis_label(velocity_C_in_view, "label_C")
 
+def update_all_projections():
+
+    for event_number in range(1, event_counter + 1):
+
+        for frame in all_frames.values():
+
+            checkbox = document.getElementById(
+                f"projection_checkbox_{frame.name}_{event_number}"
+            )
+
+            if checkbox and checkbox.checked:
+
+                remove_projection(event_number, frame)
+                draw_projection(event_number, frame)
+
 # Update axes and event points if vA/B/C changes
 def update_velocities(event=None):
 
@@ -771,6 +812,8 @@ def update_velocities(event=None):
     if x_axis_checkbox_C.checked:
         remove_x_axis(Frame_C)
         draw_x_axis(Frame_C)
+    
+    update_all_projections()
 
 # Update axes when slider is adjusted
 def update_lab_frame(event=None):
@@ -786,7 +829,6 @@ def update_lab_frame(event=None):
     update_t_axes()
     update_all_event_positions()
     update_all_coordinate_transforms()
-
 
 # Create axis label objects
 def create_axis_label(label_id, text, color="black"):
@@ -963,6 +1005,10 @@ def remove_event(event_number):
     # Remove worldline through event (if present)
     remove_worldline(event_number)
 
+    # Remove projections
+    for frame in all_frames.values():
+        remove_projection(event_number, frame)
+
 # Generate an input-box in the HTML
 def make_input(id, type="number", width="60px", placeholder=""):
     element = document.createElement("input")
@@ -1000,7 +1046,7 @@ def add_event(event=None):
 
     # Create a dropbox for event frame selection
     event_frame_select = document.createElement("select")
-    event_frame_select.onchange = lambda e, n=event_counter: update_event_position(n)
+    event_frame_select.onchange = lambda e, n=event_counter: (update_event_position(n), transformed_event_coordinates(n), update_all_projections())
     event_frame_select.id = f"event_frames_selection_{event_counter}"
     for f in all_frames.values():
         option = document.createElement("option")
@@ -1021,7 +1067,7 @@ def add_event(event=None):
 
     # Create x-input box
     x_input = make_input(f"x_{event_counter}",placeholder="x")
-    x_input.oninput = lambda e, n=event_counter: update_event_position(n)
+    x_input.oninput = lambda e, n=event_counter: (update_event_position(n), transformed_event_coordinates(n), update_all_projections())
     new_event.appendChild(x_input)
 
     # Create t-input text
@@ -1031,7 +1077,7 @@ def add_event(event=None):
 
     # Create t-input box
     t_input = make_input(f"t_{event_counter}",placeholder="t")
-    t_input.oninput = lambda e, n=event_counter: update_event_position(n)
+    t_input.oninput = lambda e, n=event_counter: (update_event_position(n), transformed_event_coordinates(n), update_all_projections())
     new_event.appendChild(t_input)
 
     # Create result container
@@ -1090,7 +1136,7 @@ def add_event(event=None):
         projection_checkbox = document.createElement("input")
         projection_checkbox.type = "checkbox"
         projection_checkbox.id = f"projection_checkbox_{key}_{event_counter}"
-        projection_checkbox.onchange = lambda event, frame=value: handle_projection_checkbox(event, event_counter, frame)
+        projection_checkbox.onchange = lambda event, frame=value, n=event_counter:handle_projection_checkbox(event, n, frame)
 
         projection_checkbox_label = document.createElement("label")
         projection_checkbox_label.setAttribute("for", f"projection_checkbox_{key}_{event_counter}")
