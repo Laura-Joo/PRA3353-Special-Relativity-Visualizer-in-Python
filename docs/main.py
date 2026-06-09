@@ -8,7 +8,7 @@ c = 1
 ORIGIN_X = 525
 ORIGIN_Y = 600
 SCALE = 20
-axis_length = 30
+axis_length = 15
 amount_of_t_ticks = 30
 amount_of_x_ticks = 26
 tick_size = 10
@@ -325,7 +325,40 @@ def remove_x_ticks(frame):
             continue
         x_tick.remove()
 
+def draw_projection(event_number, frame):
 
+    v = relative_velocity(lab_frame_velocity,frame.velocity)
+
+    point = document.getElementById(f"event_point_{event_number}")
+    cx = float(point.getAttribute("cx"))
+    cy = float(point.getAttribute("cy"))
+
+    # Take X-vector of eventpoint & translate to target frame
+    x_input = document.getElementById(f"x_{event_number}")
+    X_x, X_t = lorentz_transform(0,x_input,v)
+    screen_X_x, screen_X_t = spacetime_to_screen(X_x, X_t)
+
+    x_projection = document.createElementNS("http://www.w3.org/2000/svg","line")
+    x_projection.id = f"x_projection_{frame.name}_{event_number}"
+    x_projection.setAttribute("stroke", f"{frame.color}")
+    x_projection.setAttribute("stroke-dasharray", "2,2")
+    x_projection.setAttribute("marker-end", "url(#arrow)")
+
+    x_projection.setAttribute("x1", str(cx))
+    x_projection.setAttribute("y1", str(cy))
+    x_projection.setAttribute("x2", str(screen_X_x))
+    x_projection.setAttribute("y2", str(screen_X_t))
+
+    projection_layer = document.getElementById("projection_layer")
+    projection_layer.appendChild(x_projection)
+
+    # Take T-vector of eventpoint & translate to target frame
+    t_input = document.getElementById(f"t_{event_number}")
+    T_x, T_t = lorentz_transform(t_input,0,v)
+
+def remove_projection(frame):
+    
+    return
 
 # Create static gridlines
 def create_static_grid():
@@ -505,6 +538,29 @@ def handle_x_axis_C_checkbox(event):
     else:
         remove_x_axis(Frame_C)
 
+def handle_worldline_checkbox(event):
+
+    checkbox = event.target
+
+    event_number = checkbox.id.replace("worldline_checkbox_", "")
+
+    if checkbox.checked:
+        draw_worldline(event_number)
+
+    else:
+        remove_worldline(event_number)
+
+def handle_projection_checkbox(event, event_number, frame):
+
+    checkbox = event.target
+
+    if checkbox.checked:
+        draw_projection(event_number, frame)
+
+    else:
+        remove_projection(event_number, frame)
+
+
 ### LIGHTCONE PER EVENT ###
 
 def draw_light_cones(event_number):
@@ -632,17 +688,9 @@ def remove_worldline(event_number):
     
     worldline.remove()
 
-def handle_worldline_checkbox(event):
 
-    checkbox = event.target
 
-    event_number = checkbox.id.replace("worldline_checkbox_", "")
-
-    if checkbox.checked:
-        draw_worldline(event_number)
-
-    else:
-        remove_worldline(event_number)
+### UPDATER FUNCTIONS ###
 
 # Update the position of axes labels
 def update_axis_label(v, label_id):
@@ -654,7 +702,7 @@ def update_axis_label(v, label_id):
 
     screen_x, screen_y = spacetime_to_screen(x, t)
     screen_x += 10
-    screen_y = 40
+    screen_y = 60
 
     label.setAttribute("x", str(screen_x + 10))
     label.setAttribute("y", str(screen_y))
@@ -991,11 +1039,6 @@ def add_event(event=None):
     result_container.style.marginTop = "10px"
     result_container.style.marginBottom = "10px"
 
-    # Create transformed coordinate text before result
-    result_label = document.createElement("span")
-    result_label.innerText = "Transformed coordinates: "
-    result_container.appendChild(result_label)
-
     # Create result display
     result = document.createElement("span")
     result.id = f"result_{event_counter}"
@@ -1038,6 +1081,26 @@ def add_event(event=None):
     lightcone_checkbox_container.appendChild(lightcone_checkbox_label)
 
     new_event.appendChild(lightcone_checkbox_container)
+
+    # Create 'show projection' checkbox & label container space
+    projection_checkbox_container = document.createElement("div")
+
+    for key,value in all_frames.items():
+
+        projection_checkbox = document.createElement("input")
+        projection_checkbox.type = "checkbox"
+        projection_checkbox.id = f"projection_checkbox_{key}_{event_counter}"
+        projection_checkbox.onchange = lambda event, frame=value: handle_projection_checkbox(event, event_counter, frame)
+
+        projection_checkbox_label = document.createElement("label")
+        projection_checkbox_label.setAttribute("for", f"projection_checkbox_{key}_{event_counter}")
+        projection_checkbox_label.innerText = str(key)
+
+        projection_checkbox_label.style.marginRight = "8px"
+        projection_checkbox_container.appendChild(projection_checkbox)
+        projection_checkbox_container.appendChild(projection_checkbox_label)
+
+    new_event.appendChild(projection_checkbox_container)
 
     # Create 'worldline' checkbox & label container space
     worldline_checkbox_container = document.createElement("div")
