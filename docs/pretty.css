@@ -45,6 +45,7 @@ body {
 .tooltip-container {
   position: relative;
   cursor: help;
+  display: inline-block;
 }
 
 .tooltip-text {
@@ -55,10 +56,13 @@ body {
   border-radius: 6px;
 
   position: absolute;
-  left: 20px;
-  top: 0;
-  white-space: nowrap;
   z-index: 10;
+
+  display: block;
+  width: 250px;
+
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .tooltip-container:hover .tooltip-text {
@@ -228,6 +232,29 @@ body {
   user-select: none;
   white-space: nowrap;
 }
+
+.frame-x-axis-toggle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.frame-x-axis-toggle input[type="checkbox"] {
+  accent-color: var(--color-text-muted);
+  width: 12px;
+  height: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.frame-x-axis-toggle span {
+  font-size: 10px;
+  color: var(--color-text-muted);
+  user-select: none;
+  white-space: nowrap;
+}
+
 
 
 /* events horizontal scrollable tray of cards */

@@ -29,11 +29,17 @@
               <!-- Velocity A display -->
               <input class="frame-velocity-input" id="velocity_A" type="number" step="0.01" value="0" py-input="update_velocities">
               <span class="frame-velocity-display" id="velocity_A_display">vA = 0.00c</span>
+
+              <!-- Checkboxes A -->
               <label class="frame-grid-toggle">
                 <input type="checkbox" id="gridlines_A" name="gridlines_A" value="on" py-change="handle_grid_A_checkbox">
-                <span>gridlines</span>
+                <span>Show grid</span>
               </label>
 
+              <label class="frame-x-axis-toggle">
+                <input type="checkbox" id="x_axis_A" name="x_axis_A" value="on" py-change="handle_x_axis_A_checkbox">
+                <span>Show x'-axis</span>
+              </label>
             </div>
 
             <div class="frame-row">
@@ -45,10 +51,17 @@
               <!-- Velocity B display -->
               <input class="frame-velocity-input" id="velocity_B" type="number" step="0.01" value="0" py-input="update_velocities">
               <span class="frame-velocity-display" id="velocity_B_display">vB = 0.00c</span>
+
+              <!-- Checkboxes B -->
               <label class="frame-grid-toggle">
                 <input type="checkbox" id="gridlines_B" name="gridlines_B" value="on" py-change="handle_grid_B_checkbox">
-                <span>gridlines</span>
+                <span>Show grid</span>
               </label>
+
+              <label class="frame-x-axis-toggle">
+                <input type="checkbox" id="x_axis_B" name="x_axis_B" value="on" py-change="handle_x_axis_B_checkbox">
+                <span>Show x'-axis</span>
+              </label>              
 
             </div>
 
@@ -61,9 +74,16 @@
               <!-- Velocity C display -->
               <input class="frame-velocity-input" id="velocity_C" type="number" step="0.01" value="0" py-input="update_velocities">
               <span class="frame-velocity-display" id="velocity_C_display">vC = 0.00c</span>
+
+              <!-- Checkboxes C -->
               <label class="frame-grid-toggle">
                 <input type="checkbox" id="gridlines_C" name="gridlines_C" value="on" py-change="handle_grid_C_checkbox">
-                <span>gridlines</span>
+                <span>Show grid</span>
+              </label>
+
+              <label class="frame-x-axis-toggle">
+                <input type="checkbox" id="x_axis_C" name="x_axis_C" value="on" py-change="handle_x_axis_C_checkbox">
+                <span>Show x'-axis</span>
               </label>
 
             </div>
