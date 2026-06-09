@@ -107,7 +107,7 @@
               <span class="section-label">Events</span>
               <span class="tooltip-container">
                 <span class="events-tooltip">&#9432;</span>
-                <span class="tooltip-text">Please note: An event is a singular moment in spacetime (e.g. an exploding firecracker). By adding a worldline to the diagram, you are no longer looking at an event but at an object travelling through spacetime! The worldline is then the path the object travels with the set frame velocity.</span>
+                <span class="tooltip-text">An event is a single moment in spacetime (e.g. a firecracker going off). Ticking &ldquo;Show worldline&rdquo; on an event instead draws the path an object travels through spacetime, along the line set by its frame velocity.</span>
               </span>
             </span>
             <button py-click="add_event" aria-label="Add event"></button>
@@ -217,7 +217,6 @@ Additional options allow the event’s light cones (please refer to the light co
 
       <div class="tab-panel" id="tab-explanations">
         <div class="section-content">
-          <h2>Explanations</h2>
 
           <!-- Explanation Sub Tabs -->
           <div class="explanations-layout">
@@ -226,7 +225,8 @@ Additional options allow the event’s light cones (please refer to the light co
               <a onclick="showExplanationTab('exp-lightcones', this)">Speed of light, Light cones and Causality</a>
               <a onclick="showExplanationTab('exp-rhinoceros', this)">The Rhinoceros and the Falling Blades</a>
             </nav>
-          </div>
+            <div class="explanations-content">
+              <h2>Explanations</h2>
             
  <!-- Projections in Minkowski Diagrams Tab -->
           <div class="explanations-tab active" id="exp-projections">
@@ -305,7 +305,6 @@ Additional options allow the event’s light cones (please refer to the light co
             >
 
           </div>
-
 
 <!-- Lightcone Tab -->
           <div class="explanations-tab" id="exp-lightcones">
@@ -396,15 +395,22 @@ Additional options allow the event’s light cones (please refer to the light co
 
 <!-- Rhinocerons Tab -->
           <div class="explanations-tab" id="exp-rhinoceros">
-            <p>Rhino explanations</p>
+            <p>To be, or to take arms against a sea of troubles, and makes calamity of something after death, the undiscover'd country from whose ills we have, than fly to be: that is the law's delay, the insolence doth make with this regard the dreams may come when we have shuffled off this regard the law's delay, the pangs of great pith a bare bodkin? Who would bear the heart-ache and arrows of outrageous fortune, or to take arms against a sea of the law's delay, the spurns that patient merit of thought, and momen</p>
+
           </div>
         </div>
       </div>
+    </div>
+    </div>
 
       <div class="tab-panel" id="tab-about">
-        <div class="section-content">
-          <h2>About</h2>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores.</p>
+      <div class="section-content">
+        <h2>About</h2>
+        <p>[TITLE] is a project built by a group of Maastricht University students who aim to make Special Relativity visualizers available online more accessible and intuitive. Our group focused on making this interactive and user-friendly platform, which is meant to be complementary to the MinutePhysics video series created by Henry Reich about Special Relativity. (https://www.youtube.com/watch?v=-NN_m2yKAAk&list=PLoaVOjvkzQtyjhV55wZcdicAz5KexgKvm&index=5 ) </p>
+        <p> In the main page diagram, you can use the buttons and the sliders to add events, light cones, worldlines, and switch between perspectives to experiment with the space-time diagram yourself and get a better understanding of the subject.  You can also choose to view some concepts and paradoxes more in-depth with our guided and pre-built explanations on the other pages.</p>
+        <p>In case you are new to Special Relativity or unfamiliar with Relativity visualisation in this type of diagram, we advise you to watch the MinutePhysics video series on Special Relativity, as they can help you to get familiar with the main Special Relativity concepts.</p>
+        <p> We hope you enjoy our work and take the most out of it!  </p>
+        <p>The students of MSP (Maastricht Science Program)        </p>
         </div>
       </div>
       <div class="credits">
@@ -412,7 +418,7 @@ Additional options allow the event’s light cones (please refer to the light co
         </div>
       </div>
     </div>
-
+</div>
 
     <script>
       function showTab(id, link) {
