@@ -325,6 +325,7 @@ def remove_x_ticks(frame):
             continue
         x_tick.remove()
 
+# Draw projections onto frames
 def draw_projection(event_number, frame):
 
     # Selected event frame
@@ -612,9 +613,15 @@ def draw_light_cones(event_number):
     point = document.getElementById(f"event_point_{event_number}")
     if point is None:
         return
-    
-    x_coordinate = float(point.getAttribute("cx"))
-    y_coordinate = float(point.getAttribute("cy"))
+
+    cx = point.getAttribute("cx")
+    cy = point.getAttribute("cy")
+
+    if not cx or not cy :
+        return
+
+    x_coordinate = float(cx)
+    y_coordinate = float(cy)
 
     positive_x_beginpoint = x_coordinate - (LIGHTCONE_SCALE * 10)
     positive_y_beginpoint = y_coordinate + (LIGHTCONE_SCALE * 10)
@@ -686,8 +693,14 @@ def draw_worldline(event_number):
     if point is None:
         return
     
-    x_shift = float(point.getAttribute("cx")) - ORIGIN_X
-    y_shift = float(point.getAttribute("cy")) - ORIGIN_Y
+    cx = point.getAttribute("cx")
+    cy = point.getAttribute("cy")
+
+    if not cx or not cy:
+        return
+
+    x_shift = float(cx) - ORIGIN_X
+    y_shift = float(cy) - ORIGIN_Y
 
     selected_frame_name = document.getElementById(f"event_frames_selection_{event_number}").value
     selected_frame = get_frame_by_name(selected_frame_name)
@@ -729,7 +742,6 @@ def remove_worldline(event_number):
         return
     
     worldline.remove()
-
 
 
 ### UPDATER FUNCTIONS ###
@@ -1082,8 +1094,8 @@ def add_event(event=None):
     new_event.appendChild(x_label)
 
     # Create x-input box
-    x_input = make_input(f"x_{event_counter}",placeholder="x")
-    x_input.oninput = lambda e, n=event_counter: (update_event_position(n), transformed_event_coordinates(n), update_all_projections())
+    x_input = make_input(f"x_{event_counter}")
+    x_input.onchange = lambda e, n=event_counter: (update_event_position(n), transformed_event_coordinates(n), update_all_projections())
     new_event.appendChild(x_input)
 
     # Create t-input text
@@ -1092,8 +1104,8 @@ def add_event(event=None):
     new_event.appendChild(t_label)
 
     # Create t-input box
-    t_input = make_input(f"t_{event_counter}",placeholder="t")
-    t_input.oninput = lambda e, n=event_counter: (update_event_position(n), transformed_event_coordinates(n), update_all_projections())
+    t_input = make_input(f"t_{event_counter}")
+    t_input.onchange = lambda e, n=event_counter: (update_event_position(n), transformed_event_coordinates(n), update_all_projections())
     new_event.appendChild(t_input)
 
     # Create result container
@@ -1126,6 +1138,53 @@ def add_event(event=None):
     event_label.setAttribute("font-size", "16")
     event_layer.appendChild(event_label)
 
+    # Projection container
+    projection_checkbox_container = document.createElement("div")
+    projection_checkbox_container.style.display = "flex"
+    projection_checkbox_container.style.flexDirection = "column"
+    projection_checkbox_container.style.marginBottom = "6px"
+
+    # Projection container title
+    projection_checkbox_title = document.createElement("span")
+    projection_checkbox_title.innerText = "Show projection onto frame:"
+    projection_checkbox_container.appendChild(projection_checkbox_title)
+
+    # Row container for checkboxes
+    checkbox_row = document.createElement("div")
+    checkbox_row.style.display = "flex"
+    checkbox_row.style.flexDirection = "row"
+    checkbox_row.style.alignItems = "center"
+    checkbox_row.style.gap = "10px"
+
+    projection_checkbox_container.appendChild(checkbox_row)
+
+    for key, value in all_frames.items():
+
+        if key == "Observer":
+            continue
+
+        # Pair container
+        pair_container = document.createElement("div")
+        pair_container.style.display = "flex"
+        pair_container.style.alignItems = "center"
+
+        projection_checkbox = document.createElement("input")
+        projection_checkbox.type = "checkbox"
+        projection_checkbox.id = f"projection_checkbox_{key}_{event_counter}"
+        projection_checkbox.onchange = lambda event, frame=value, n=event_counter: handle_projection_checkbox(event, n, frame)
+
+        projection_checkbox_label = document.createElement("label")
+        projection_checkbox_label.setAttribute("for", f"projection_checkbox_{key}_{event_counter}")
+        projection_checkbox_label.style.marginLeft = "8px"
+        projection_checkbox_label.innerText = str(key)
+
+        pair_container.appendChild(projection_checkbox)
+        pair_container.appendChild(projection_checkbox_label)
+
+        checkbox_row.appendChild(pair_container)
+
+    new_event.appendChild(projection_checkbox_container)
+
     # Create 'show lightcone' checkbox & label container space
     lightcone_checkbox_container = document.createElement("div")
 
@@ -1143,38 +1202,6 @@ def add_event(event=None):
     lightcone_checkbox_container.appendChild(lightcone_checkbox_label)
 
     new_event.appendChild(lightcone_checkbox_container)
-
-    # Create 'show projection' checkbox & label container space
-    projection_checkbox_container = document.createElement("div")
-    projection_checkbox_container.style.display = "flex"
-    projection_checkbox_container.flexDirection = "column"
-
-    projection_checkbox_title = document.createElement("span")
-    projection_checkbox_title.innerText = "Show projection"
-    projection_checkbox_container.appendChild(projection_checkbox_title)
-
-    for key,value in all_frames.items():
-
-        
-        if key == "Observer":
-            continue
-
-        projection_checkbox = document.createElement("input")
-        projection_checkbox.type = "checkbox"
-        projection_checkbox.id = f"projection_checkbox_{key}_{event_counter}"
-        projection_checkbox.onchange = lambda event, frame=value, n=event_counter:handle_projection_checkbox(event, n, frame)
-
-        projection_checkbox_label = document.createElement("label")
-        projection_checkbox_label.setAttribute("for", f"projection_checkbox_{key}_{event_counter}")
-        projection_checkbox_label.innerText = str(key)
-
-        projection_checkbox_label.style.marginRight = "5px"
-        projection_checkbox_container.appendChild(projection_checkbox)
-        projection_checkbox_container.appendChild(projection_checkbox_label)
-
-
-
-    new_event.appendChild(projection_checkbox_container)
 
     # Create 'worldline' checkbox & label container space
     worldline_checkbox_container = document.createElement("div")

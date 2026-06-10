@@ -30,8 +30,8 @@
                 <span class="frame-name a">A</span>
               </div>
 
-              <!-- Velocity A display -->
-              <input class="frame-velocity-input" id="velocity_A" type="number" step="0.01" value="0" py-input="clamp_velocity">
+              <!-- Velocity A input/display -->
+              <input class="frame-velocity-input" id="velocity_A" type="number" step="0.01" value="0" py-change="clamp_velocity">
               <span class="frame-velocity-display" id="velocity_A_display">vA = 0.00c</span>
 
               <!-- Checkboxes A -->
@@ -54,8 +54,8 @@
                 <span class="frame-name b">B</span>
               </div>
 
-              <!-- Velocity B display -->
-              <input class="frame-velocity-input" id="velocity_B" type="number" step="0.01" value="0" py-input="clamp_velocity">
+              <!-- Velocity B input/display -->
+              <input class="frame-velocity-input" id="velocity_B" type="number" step="0.01" value="0" py-change="clamp_velocity">
               <span class="frame-velocity-display" id="velocity_B_display">vB = 0.00c</span>
 
               <!-- Checkboxes B -->
@@ -63,13 +63,12 @@
               <label class="frame-x-axis-toggle">
                 <input type="checkbox" id="x_axis_B" name="x_axis_B" value="on" py-change="handle_x_axis_B_checkbox">
                 <span>Show x'-axis</span>              
-              
+              </label>
+
               <label class="frame-grid-toggle">
                 <input type="checkbox" id="gridlines_B" name="gridlines_B" value="on" py-change="handle_grid_B_checkbox">
                 <span>Show grid</span>
               </label>
-
-              </label>              
 
             </div>
 
@@ -79,8 +78,8 @@
                 <span class="frame-name c">C</span>
               </div>
 
-              <!-- Velocity C display -->
-              <input class="frame-velocity-input" id="velocity_C" type="number" step="0.01" value="0" py-input="clamp_velocity">
+              <!-- Velocity C input/display -->
+              <input class="frame-velocity-input" id="velocity_C" type="number" step="0.01" value="0" py-change="clamp_velocity">
               <span class="frame-velocity-display" id="velocity_C_display">vC = 0.00c</span>
 
               <!-- Checkboxes C -->
@@ -88,12 +87,11 @@
               <label class="frame-x-axis-toggle">
                 <input type="checkbox" id="x_axis_C" name="x_axis_C" value="on" py-change="handle_x_axis_C_checkbox">
                 <span>Show x'-axis</span>              
-              
+              </label>
+
               <label class="frame-grid-toggle">
                 <input type="checkbox" id="gridlines_C" name="gridlines_C" value="on" py-change="handle_grid_C_checkbox">
                 <span>Show grid</span>
-              </label>
-
               </label>
 
             </div>
@@ -177,6 +175,7 @@
               <line id="t_axis_prime_B" x1="300" y1="600" x2="300" y2="0" stroke="green" />
               <line id="t_axis_prime_C" x1="300" y1="600" x2="300" y2="0" stroke="blue" />
               <text id="label_ct_axis" x="545" y="15" fill="black" font-size="18">ct</text>
+              <text id="label_x_axis" x="1035" y="625" fill="black" font-size="18">x</text>              
             </g>
 
             <g id="event_layer"></g>
@@ -211,7 +210,7 @@ Toggle on the gridlines option to see how spacetime behaves for the different ob
             <li>The Events panel allows you to create events and transform their coordinates between frames of reference. To do this, select the frame in which the event is defined and enter its space (x) and time (ct) coordinates. Choose a target frame and press Transform to calculate and display the coordinates of the same event in the selected reference frame. 
 Additional options allow the event’s light cones (please refer to the light cones explanation section if you are unfamiliar) and worldline to be displayed directly on the diagram, making it easier to study causality and the relationship between different events in spacetime. Please note: An event is a singular moment in spacetime (eg, an exploding firecracker). By adding a worldline to the diagram, you are no longer looking at an event but at an object travelling through spacetime. The worldline is then the path the object travels.</li>
             <li>Use the Frame Transition slider to smoothly transition between reference frames and visualise how the diagram and its elements change as velocity varies.</li>
-            <li>If you ever need a little recap of some concepts or step-by-step explanations of paradoxes, go check the tab XXX for explanations of Projections in Minkowski Diagrams, The speed of light, light cones and causality or the Rhinoceros paradox!</li>
+            <li>If you ever need a little recap of some concepts or step-by-step explanations of paradoxes, go check the tab 'Explanations' for explanations of Projections in Minkowski Diagrams, The speed of light, light cones and causality or the Rhinoceros paradox!</li>
         </div>
       </div>
 
