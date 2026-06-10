@@ -327,22 +327,38 @@ def remove_x_ticks(frame):
 
 def draw_projection(event_number, frame):
 
-    ### LOOK INTO INPUT COORDINATE FRAME
-    v = relative_velocity(lab_frame_velocity, frame.velocity)
+    # Selected event frame
+    dropdown = document.getElementById(f"event_frames_selection_{event_number}")
+    
+    if not dropdown:
+        return
+
+    event_frame_name = dropdown.value
+    event_frame = get_frame_by_name(event_frame_name)
+
+    # Event coordinates
+    try:
+        x = float(document.getElementById(f"x_{event_number}").value)
+        t = float(document.getElementById(f"t_{event_number}").value)
+    except:
+        return
+
+    # Relative velocity
+    v = relative_velocity(event_frame.velocity,lab_frame_velocity)
+
+    # Lorentz transform
+    current_T, current_X = lorentz_transform(t, x, v)
+
+    v_rel = relative_velocity(lab_frame_velocity, frame.velocity)
 
     point = document.getElementById(f"event_point_{event_number}")
     cx = float(point.getAttribute("cx"))
     cy = float(point.getAttribute("cy"))
 
-    # Take X-vector of eventpoint
-    x_input = float(document.getElementById(f"x_{event_number}").value)
+    t_prime, x_prime = lorentz_transform(current_T, current_X, v_rel)
 
-    # Take T-vector of eventpoint
-    t_input = float(document.getElementById(f"t_{event_number}").value)
-
-    T, X = lorentz_transform(t_input, x_input, v)
-    proj_t, proj_x = lorentz_transform(T, 0, -v)
-    proj_t2, proj_x2 = lorentz_transform(0, X, -v)
+    proj_t, proj_x = lorentz_transform(t_prime, 0, -v_rel)
+    proj_t2, proj_x2 = lorentz_transform(0, x_prime, -v_rel)
 
     screen_proj_x, screen_proj_t = spacetime_to_screen(proj_x, proj_t)
     screen_proj_x2, screen_proj_t2 = spacetime_to_screen(proj_x2, proj_t2)
@@ -728,7 +744,7 @@ def update_axis_label(v, label_id):
 
     screen_x, screen_y = spacetime_to_screen(x, t)
     screen_x += 10
-    screen_y = 60
+    screen_y -= 550
 
     label.setAttribute("x", str(screen_x + 10))
     label.setAttribute("y", str(screen_y))
@@ -1130,8 +1146,18 @@ def add_event(event=None):
 
     # Create 'show projection' checkbox & label container space
     projection_checkbox_container = document.createElement("div")
+    projection_checkbox_container.style.display = "flex"
+    projection_checkbox_container.flexDirection = "column"
+
+    projection_checkbox_title = document.createElement("span")
+    projection_checkbox_title.innerText = "Show projection"
+    projection_checkbox_container.appendChild(projection_checkbox_title)
 
     for key,value in all_frames.items():
+
+        
+        if key == "Observer":
+            continue
 
         projection_checkbox = document.createElement("input")
         projection_checkbox.type = "checkbox"
@@ -1142,9 +1168,11 @@ def add_event(event=None):
         projection_checkbox_label.setAttribute("for", f"projection_checkbox_{key}_{event_counter}")
         projection_checkbox_label.innerText = str(key)
 
-        projection_checkbox_label.style.marginRight = "8px"
+        projection_checkbox_label.style.marginRight = "5px"
         projection_checkbox_container.appendChild(projection_checkbox)
         projection_checkbox_container.appendChild(projection_checkbox_label)
+
+
 
     new_event.appendChild(projection_checkbox_container)
 
