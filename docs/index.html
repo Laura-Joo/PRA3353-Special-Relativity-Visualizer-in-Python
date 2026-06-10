@@ -232,18 +232,18 @@
         <div class="section-content">
           <h2>Controls</h2>
           <p>Hello everyone, welcome to the Spacetime Explorer! Here’s a quick introduction to help you use all the buttons and functionalities optimally.</p>        
-          <p>1. REFERENCE FRAMES </p> 
+          <p><strong>1. REFERENCE FRAMES </strong></p> 
           <p>Use the Reference Frames panel on the left to create different inertial observer reference frames. Enter a velocity value between -1 and 1 in the corresponding input box to change the speed of a frame relative to the observer frame in units of c (a velocity of 0.6c would then mean 60% of the speed of light). <p>
           <p>       - “Show x'-axis” displays the space axis of the selected frame. This helps visualise how space is measured by an observer moving relative to the original reference frame.</p>
           <p>       - “Show grid” overlays the spacetime grid associated with that frame, making it easier to see how coordinates transform between observers and how spacetime geometry changes from different perspectives</p> 
-          <p>2. EVENTS</p>
+          <p><strong>2. EVENTS</strong></p>
           <p>The Events panel allows you to create events and transform their coordinates between frames of reference. To do this, select the frame in which the event is defined and enter its space (x) and time (ct) coordinates. Choose a target frame and press Transform to calculate and display the coordinates of the same event in the selected reference frame. </p>
           <p> Additional options allow the event’s light cones (please refer to the light cones explanation section if you are unfamiliar), worldline and coordinate projections to be displayed directly on the diagram, making it easier to study causality and the relationship between different events in spacetime. </p>
           <p>Please note: An event is a singular moment in spacetime (eg, an exploding firecracker). By adding a worldline to the diagram, you are no longer looking at an event but at an object travelling through spacetime. The worldline is then the path the object travels.</p> 
-          <p>3. FRAME TRANSITION</p>
+          <p><strong>3. FRAME TRANSITION</strong></p>
           <p> Use the Frame Transition slider to smoothly transition between reference frames and visualise how the diagram and its elements change as velocity varies.</p>
-          <p>4. FURTHER EXPLANATIONS</p> 
-          <p>If you ever need a little recap of some concepts or step-by-step explanations of paradoxes, go check the tab 'Explanations' for explanations of Projections in Minkowski Diagrams, The speed of light, light cones and causality or the Rhinoceros paradox!</p>
+          <p><strong>4. FURTHER EXPLANATIONS</strong></p> 
+          <p>If you ever need a little recap of some concepts or step-by-step explanations of paradoxes, go check the tab 'Explanations' for explanations of <i>Projections in Minkowski Diagrams</i>, <i>The speed of light, light cones and causality</i> or the <i>Rhinoceros and the Falling Blades</i> paradox!</p>
 
         </div>
       </div>
@@ -251,7 +251,7 @@
           <!-- Explanation Sub Tabs -->
           <div class="explanations-layout">
             <nav class="explanations-nav">
-              <a class="active"onclick="showExplanationTab('exp-projections', this)">Projections In Minkowski Diagrams</a>
+              <a class="active"onclick="showExplanationTab('exp-projections', this)">Projections in Minkowski Diagrams</a>
               <a onclick="showExplanationTab('exp-lightcones', this)">Speed of light, Light cones and Causality</a>
               <a onclick="showExplanationTab('exp-rhinoceros', this)">The Rhinoceros and the Falling Blades</a>
             </nav>
@@ -261,7 +261,7 @@
             
 <!-- Projections in Minkowski Diagrams Tab -->
           <div class="explanations-tab active" id="exp-projections">
-            <h2>Projections In Minkowsi Diagrams</h2>
+            <h2>Projections in Minkowski Diagrams</h2>
             <p>The beauty of space-time diagrams is that they allow us to see how things look from different moving perspectives. In the interactive spacetime globe above, this can be done by moving the slider to transition between reference frames. In your Special Relativity classes, however, you will likely encounter Minkowski diagrams, which are a paper version of the spacetime globe. While in the online spacetime globe, the switching between frames is done for you by the code; on Minkowski paper, you can look at events from different perspectives through something called projections.</p>
             <p>This section explains what projections are and how to use them to transform between reference frames on paper.</p>
            
@@ -272,7 +272,7 @@
               class="explanation-image"
             >
 
-            <p>We always start with one reference frame, the observer frame, which has the x (space dimension) and ct (time dimension) axes at a 90-degree angle from each other, as you can see below. </p>
+            <p>We always start with one reference frame, the observer frame, which has the x (space dimension) and ct (time dimension) axes at a 90-degree angle from each other, as you can see above. </p>
             <p>It is important to remember that the observer frame does not have to be a stationary frame. In fact, according to the Principle of Relativity, there exists no true stationary frame, as each frame is equally valid to be chosen as the observer frame. Indeed, nothing is purely static in our Universe! The “observer” frame is simply the frame which does not have a velocity relative to the chosen observer. </P>
             
             <img
@@ -281,7 +281,7 @@
               width="300"
               class="explanation-image"
             >
-            <p>An event is something that happens at one point in space-time, meaning it has one ct coordinate (time) and one x coordinate (space), like the dark blue point below. </p>
+            <p>An event is something that happens at one point in space-time, meaning it has one ct coordinate (time) and one x coordinate (space), like the dark blue point above. </p>
   
             <img
               src="images_explanations/Project_3.png"
@@ -327,7 +327,7 @@
             <p>The important thing to remember here is that the dotted line that projects the event onto the axis you want to read the information from must always be parallel to the other axis of the same frame. The dotted lines basically mean “as seen by [insert chosen frame of reference]”. Here, our event happens at (3, 2) in the blue reference frame, but at around (2.5, 0.5) in the orange reference frame. </p>
             <p>This is how we read space-time diagrams: these values are… relative! </p>
             <p>Make sure you properly understand how to do these kinds of projections before diving into more complex situations </p>
-            <p>You might have noticed, in the interactive spacetime globe above, that the tick marks of a tilted reference frame are slightly slanted. The slope of these ticks corresponds to the slope of the x’-axis. To project an event onto a ct-axis of a specific reference frame, you would have to draw a line from the event to the ct-axis of that frame, parallel to the tickmarks on this axis, as shown below. </p>
+            <p>You might have noticed, in the interactive spacetime globe above, that the tick marks of a tilted reference frame are slightly slanted. The slope of these ticks corresponds to the slope of the x’-axis. To project an event onto a ct-axis of a specific reference frame, you would have to draw a line from the event to the ct-axis of that frame, parallel to the tickmarks on this axis, as shown above. </p>
 
             <img
               src="images_explanations/Project_8.png"
@@ -359,7 +359,7 @@
               width="748"
               class="explanation-image"
             > 
-            <p>Imagine you stand in the centre of the diagram (at rest relative to the reference frame) with a light bulb, and you turn it on for one millisecond. The diagram below shows the worldlines of light rays emitted in both directions from your light bulb at time = 0. This V shape, which is created by the two worldlines of light, is what we call a future light cone. Following these lines, you can then see that these rays of light will reach x = 2 and x = -2 at ct = 2, etc. </p>
+            <p>Imagine you stand in the centre of the diagram (at rest relative to the reference frame) with a light bulb, and you turn it on for one millisecond. The diagram above shows the worldlines of light rays emitted in both directions from your light bulb at time = 0. This V shape, which is created by the two worldlines of light, is what we call a future light cone. Following these lines, you can then see that these rays of light will reach x = 2 and x = -2 at ct = 2, etc. </p>
             
             <img
               src= "images_explanations/Light_2.png"
@@ -399,7 +399,7 @@
               width="748"
               class="explanation-image"
             >
-            <p>The same principle applies to moving things relative to the event. Imagine that you are now on a spaceship travelling to another galaxy at a fraction of the speed of light. The spaceship just passes by Earth at time = 0, so that Earth and the spaceship are at the coordinates (0, 0) in our diagram. The red line on the diagram below is the worldline of the spaceship. </p>
+            <p>The same principle applies to moving things relative to the event. Imagine that you are now on a spaceship travelling to another galaxy at a fraction of the speed of light. The spaceship just passes by Earth at time = 0, so that Earth and the spaceship are at the coordinates (0, 0) in our diagram. The red line on the diagram above is the worldline of the spaceship. </p>
 
             <img
               src="images_explanations/Light_7.png"
@@ -423,7 +423,7 @@
               width="748"
               class="explanation-image"
             >
-            <p>Since nothing can go faster than light, there is no way the explosion of the galaxy may have influenced things on Earth before t2. This is why all points within the future light cone (in yellow below) can be called the “causal future”: anything in this light cone might be influenced by the explosion of the galaxy. </p>
+            <p>Since nothing can go faster than light, there is no way the explosion of the galaxy may have influenced things on Earth before t2. This is why all points within the future light cone (in yellow above) can be called the “causal future”: anything in this light cone might be influenced by the explosion of the galaxy. </p>
 
             <img
               src="images_explanations/Light_10.png"
@@ -432,7 +432,7 @@
               class="explanation-image"
             >
             <p>The past light cone encompassing the “causal past” is framed by the same 45-degree sloped lines, representing the light that reached the event. Only events within this past light cone might have influenced the explosion; any events outside of it were too far away for their light to travel to the galaxy in time to have influenced the explosion. </p>
-            <p>In your Special Relativity classes, you will see that events within the future or past light cone of another one are called <i>time-like<i> separated (because you just need to look at the future or the past to see that they can influence each other), while events outside of these light cones are called <i>space-like</i> separated (because they are literally too far away from the event to be influenced by it).</p>
+            <p>In your Special Relativity classes, you will see that events within the future or past light cone of another one are called <i>time-like</i> separated (because you just need to look at the future or the past to see that they can influence each other), while events outside of these light cones are called <i>space-like</i> separated (because they are literally too far away from the event to be influenced by it).</p>
           </div>
 
 <!-- Rhinocerons Tab -->
@@ -483,20 +483,25 @@
               width="748"
               class="explanation-image"
             >
-            
+            <p>Alright, the scene is now set! Remember, the problem says that when Robespierre’s tail just passes the first blade (the line going from E1), both blades will go down at the same time in their frame of reference (the blue one).</p>
+            <p>To visualise that in the diagram, you need to follow the worldline of Robespierre’s tail (which coincides with the red ct’-axis) until it crosses the worldline of the first blade at the yellow cross in the diagram above.</p>
+
             <img
               src="images_explanations/Rhino_6.png"
               alt="Second yellow cross and projection of t1 and t2"
               width="748"
               class="explanation-image"
             >
-            
+            <p>Both blades will then go down simultaneously at this time (at almost 12 seconds) for their own frame of reference! Indeed, in the blue frame, t1 is when the first blade goes down, t2 is when the second one goes down, and they happen at the same time.  Likewise, can you see that the worldline of Robespierre’s head (E4) encounters the second blade exactly at the second yellow cross? This already gives us the solution to our paradox in the ground’s frame of reference! Indeed, for the blue frame, the blades go down simultaneously, but Robespierre’s length is contracted to 4 meters, so he perfectly fits in between the blades and doesn’t get hurt!</p>
+            <p>This is the type of thought process you’ll get used to when working with Minkowski diagrams in your Special Relativity classes. But, you know that our online spacetime globe has a feature to change the perspective to the red frame of reference, right? Let’s use that function to see what the solution to the paradox will be in Robespierre’s frame of reference!</p>
+
             <img
               src="images_explanations/Rhino_7.png"
               alt="Transition to the red frame"
               width="748"
               class="explanation-image"
             >
+            <p>After transforming to the perspective of the red frame, the spacetime globe looks like this: everything moved! Remember that Robespierre’s and the blades’ worldlines are still there in yellow. Let me put the drawings back so you can understand how we changed perspective.</p>
             
             <img
               src="images_explanations/Rhino_8.png"
@@ -504,14 +509,20 @@
               width="748"
               class="explanation-image"
             >
-            
+            <p>Here is Robespierre, standing still in the red frame. The blades are moving relative to his red reference frame, so they seem to be moving towards him as seen from this perspective. The yellow crosses still represent when the blades go down. As you can see, in this frame, Rosebepierre is 5 meters long, while the space between the blades is length-contracted to only 3.2 meters. At first glance, this creates a contradiction: how can his horn get cut off in his own frame but not in the ground’s?!</p>
+            <p>Let's see what we might have missed. As shown in the diagram, the first cross is still at the intersection of the tail’s worldline (the ct’-axis) with the first blade’s worldline (that is now tilted). The second cross is also still at the intersection of the horn’s worldline (now vertical) with the second blade’s worldline (now tilted).</p>
+
             <img
               src="images_explanations/Rhino_9.png"
-              alt="TITLE"
+              alt="Adding the projections onto the red axes"
               width="748"
               class="explanation-image"
             >
-            
+            <p>The difference here is that the blades don’t go down simultaneously for the rhinoceros’s frame (the red one). The first blade actually goes down at t1’ while the second one goes down at t2’, which is earlier. That’s the loss of simultaneity! From Robespierre’s perspective, it then just looks like the guillotine approaches him at 60% of the speed of light, and the second blade goes down right in front of his horn (then we assume it goes up instantly). The guillotine continues travelling along the rhino’s body, and finally, the first blade goes down exactly at his tail!</p>
+            <p>The key is to see that the paradox is solved in two different ways at the same time! The length contraction of Robespierre solves the paradox in the ground’s reference frame by making him exactly 4 meters long. And the loss of simultaneity solves the paradox in Robespierre’s reference frame by making the blades go down at different times!</p>
+            <p>See? There was never a paradox if we take into account all the relativistic effects in all the frames of reference involved :)</p>
+            <p>Congrats! You solved the Rhinoceros paradox! Robespierre knows he won’t get hurt thanks to you! If you understood this particularly challenging paradox, you can now deal with almost any Special Relativity problem! Good luck!</p>
+
           </div>
         </div>
       </div>
@@ -529,7 +540,7 @@
         </div>
       </div>
       <div class="credits">
-        <div class="ack-text">Designed by Laura-Jo Lykles, Joey Deliège, Margot Portier and Victoria Mansho. Project led by Laura-Jo Lykles and supervised by Panos Christakoglou at Maastricht University. Project inspired by Henry Reich's MinutePhysics videos series about Special Relativity.</div>
+        <div class="ack-text">Designed by Laura-Jo Lykles, Joey Deliège, Margot Portier, Victoria Mansho and Nathaniel Bay. Project led by Laura-Jo Lykles and supervised by Panos Christakoglou at Maastricht University. Project inspired by Henry Reich's MinutePhysics videos series about Special Relativity.</div>
         </div>
       </div>
     </div>
