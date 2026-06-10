@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>MDV tool</title>
+    <title>Spacetime Explorer</title>
     <link rel="stylesheet" href="pretty.css">
     <script type="module" src="https://pyscript.net/releases/2026.3.1/core.js"></script>
   </head>
@@ -11,10 +11,39 @@
   <body>
 
     <script type="py" src="./main.py"></script>
+    <!-- Javascript test -->
+    <script>
+      
+      function nextSlide(containerId) {
+        const container = document.getElementById(containerId);
+        const slides = container.querySelectorAll(".slide");
+        let index = [...slides].findIndex(s => s.classList.contains("active"));
 
+        slides[index].classList.remove("active");
+        index = (index + 1) % slides.length;
+        slides[index].classList.add("active");
+      }
+
+      function prevSlide(containerId) {
+        const container = document.getElementById(containerId);
+        const slides = container.querySelectorAll(".slide");
+        let index = [...slides].findIndex(s => s.classList.contains("active"));
+
+        slides[index].classList.remove("active");
+        index = (index - 1 + slides.length) % slides.length;
+        slides[index].classList.add("active");
+      }
+
+    </script>
+    
+    
+    <script>
+
+
+    </script>
     <div class="app-container">
 
-    <div class="title-bar">Title</div>
+    <div class="title-bar">Spacetime Explorer</div>
 
     <div class="app-shell">
 
@@ -105,7 +134,7 @@
               <span class="section-label">Events</span>
               <span class="tooltip-container">
                 <span class="events-tooltip">&#9432;</span>
-                <span class="tooltip-text">An event is a single moment in spacetime (e.g. a firecracker going off). Ticking &ldquo;Show worldline&rdquo; on an event instead draws the path an object travels through spacetime, along the line set by its frame velocity.</span>
+                <span class="tooltip-text">Please note: An event is a singular moment in spacetime (e.g., an exploding firecracker). By cliking &ldquo;Add worldline&rdquo;, you are no longer looking at an event but at an object travelling through spacetime! The worldline is then the path the object travels and is parallel to the ct-axis of the frame it is in.</span>
               </span>
             </span>
             <button py-click="add_event" aria-label="Add event"></button>
@@ -202,104 +231,116 @@
       <div class="tab-panel active" id="tab-main">
         <div class="section-content">
           <h2>Controls</h2>
-          <p>Hello everyone, welcome to [TITLE]! Here’s a quick introduction in case you’re stuck on what exactly all the buttons do:) / to help you use all the buttons and functionalities optimally.</p>
-          <ol>
-            <li>Use the Reference Frames panel on the left to create different inertial observer reference frames.
-Enter a velocity value between -1 and 1 in the corresponding input box to change the speed of a frame relative to the observer frame in units of c. (A velocity of 0.6c would then mean 60% of the speed of light.) The coloured axes displayed on the diagram represent the space and time dimensions of each frame.
-Toggle on the gridlines option to see how spacetime behaves for the different observers. Have a look at the Projections in Minkowski Diagrams section to see how using an online spacetime globe is equivalent to using classic  Minkowski paper.</li>
-            <li>The Events panel allows you to create events and transform their coordinates between frames of reference. To do this, select the frame in which the event is defined and enter its space (x) and time (ct) coordinates. Choose a target frame and press Transform to calculate and display the coordinates of the same event in the selected reference frame. 
-Additional options allow the event’s light cones (please refer to the light cones explanation section if you are unfamiliar) and worldline to be displayed directly on the diagram, making it easier to study causality and the relationship between different events in spacetime. Please note: An event is a singular moment in spacetime (eg, an exploding firecracker). By adding a worldline to the diagram, you are no longer looking at an event but at an object travelling through spacetime. The worldline is then the path the object travels.</li>
-            <li>Use the Frame Transition slider to smoothly transition between reference frames and visualise how the diagram and its elements change as velocity varies.</li>
-            <li>If you ever need a little recap of some concepts or step-by-step explanations of paradoxes, go check the tab 'Explanations' for explanations of Projections in Minkowski Diagrams, The speed of light, light cones and causality or the Rhinoceros paradox!</li>
+          <p>Hello everyone, welcome to the Spacetime Explorer! Here’s a quick introduction in case you’re stuck on what exactly all the buttons do:) / to help you use all the buttons and functionalities optimally.</p>        
+          <p>1. REFERENCE FRAMES </p> 
+          <p>Use the Reference Frames panel on the left to create different inertial observer reference frames. Enter a velocity value between -1 and 1 in the corresponding input box to change the speed of a frame relative to the observer frame in units of c (a velocity of 0.6c would then mean 60% of the speed of light). <p>
+          <p>       - “Show x'-axis” displays the space axis of the selected frame. This helps visualise how space is measured by an observer moving relative to the original reference frame.</p>
+          <p>       - “Show grid” overlays the spacetime grid associated with that frame, making it easier to see how coordinates transform between observers and how spacetime geometry changes from different perspectives</p> 
+          <p>2. EVENTS</p>
+          <p>The Events panel allows you to create events and transform their coordinates between frames of reference. To do this, select the frame in which the event is defined and enter its space (x) and time (ct) coordinates. Choose a target frame and press Transform to calculate and display the coordinates of the same event in the selected reference frame. </p>
+          <p> Additional options allow the event’s light cones (please refer to the light cones explanation section if you are unfamiliar), worldline and coordinate projections to be displayed directly on the diagram, making it easier to study causality and the relationship between different events in spacetime. </p>
+          <p>Please note: An event is a singular moment in spacetime (eg, an exploding firecracker). By adding a worldline to the diagram, you are no longer looking at an event but at an object travelling through spacetime. The worldline is then the path the object travels.</p> 
+          <p>3. FRAME TRANSITION</p>
+          <p> Use the Frame Transition slider to smoothly transition between reference frames and visualise how the diagram and its elements change as velocity varies.</p>
+          <p>4. FURTHER EXPLANATIONS</p> 
+          <p>If you ever need a little recap of some concepts or step-by-step explanations of paradoxes, go check the tab 'Explanations' for explanations of Projections in Minkowski Diagrams, The speed of light, light cones and causality or the Rhinoceros paradox!</p>
+
         </div>
       </div>
-
       <div class="tab-panel" id="tab-explanations">
-        <div class="section-content">
-
           <!-- Explanation Sub Tabs -->
           <div class="explanations-layout">
             <nav class="explanations-nav">
-              <a class="active" onclick="showExplanationTab('exp-projections', this)">Projections In Minkowski Diagrams</a>
+              <a class="active"onclick="showExplanationTab('exp-projections', this)">Projections In Minkowski Diagrams</a>
               <a onclick="showExplanationTab('exp-lightcones', this)">Speed of light, Light cones and Causality</a>
               <a onclick="showExplanationTab('exp-rhinoceros', this)">The Rhinoceros and the Falling Blades</a>
             </nav>
+            <div class="section-content">
+
             <div class="explanations-content">
-              <h2>Explanations</h2>
             
- <!-- Projections in Minkowski Diagrams Tab -->
+<!-- Projections in Minkowski Diagrams Tab -->
           <div class="explanations-tab active" id="exp-projections">
-            <p>The beauty of space-time diagrams is that they allow us to see how things look from different moving perspectives. In the interactive spacetime globe above, this can be done by moving the slider to transition between reference frames. In your Special Relativity classes, however, you will likely encounter Minkowski diagrams, which are a paper version of the spacetime globe. While in the online spacetime globe, the switching between frames is done for you by the code; on Minkowski paper, you can look at events from different perspectives through something called projections. This section explains what projections are and how to use them to transform between reference frames on paper. </p>
-            <p>We always start with one reference frame, the observer frame, which has the x (space dimension) and ct (time dimension) axes at a 90-degree angle from each other, as you can see below. </p>
-   
+            <h2>Projections In Minkowsi Diagrams</h2>
+            <p>The beauty of space-time diagrams is that they allow us to see how things look from different moving perspectives. In the interactive spacetime globe above, this can be done by moving the slider to transition between reference frames. In your Special Relativity classes, however, you will likely encounter Minkowski diagrams, which are a paper version of the spacetime globe. While in the online spacetime globe, the switching between frames is done for you by the code; on Minkowski paper, you can look at events from different perspectives through something called projections.</p>
+            <p>This section explains what projections are and how to use them to transform between reference frames on paper.</p>
+           
             <img
-              src="NAME.png"
-              alt="TITLE"
+              src="images_explanations/Project_1.png"
+              alt="One reference frame"
+              width="300"
               class="explanation-image"
             >
-            <P>  It is important to remember that the observer frame does not have to be a stationary frame. In fact, according to the Principle of Relativity, there exists no true stationary frame, as each frame is equally valid to be chosen as the observer frame. Indeed, nothing is purely static in our Universe! The “observer” frame is simply the frame which does not have a velocity relative to the chosen observer. </P>
-            <p> An event is something that happens at one point in space-time, meaning it has one ct coordinate (time) and one x coordinate (space), like the dark blue point below. </p>
+
+            <p>We always start with one reference frame, the observer frame, which has the x (space dimension) and ct (time dimension) axes at a 90-degree angle from each other, as you can see below. </p>
+            <p>It is important to remember that the observer frame does not have to be a stationary frame. In fact, according to the Principle of Relativity, there exists no true stationary frame, as each frame is equally valid to be chosen as the observer frame. Indeed, nothing is purely static in our Universe! The “observer” frame is simply the frame which does not have a velocity relative to the chosen observer. </P>
+            
+            <img
+              src="images_explanations/Project_2.png"
+              alt="One reference frame and a dark blue dot"
+              width="300"
+              class="explanation-image"
+            >
+            <p>An event is something that happens at one point in space-time, meaning it has one ct coordinate (time) and one x coordinate (space), like the dark blue point below. </p>
   
             <img
-              src="NAME.png"
-              alt="TITLE"
+              src="images_explanations/Project_3.png"
+              alt="One reference frame and a dark blue dot with straight projections"
+              width="300"
+              class="explanation-image"
+            >
+            <p>To read the x (or space) -coordinate of the event on this diagram, you have to follow the vertical dotted line (which is parallel to the ct-axis) from the point until the x-axis. To find the ct (or time)-coordinate, you have to follow the horizontal dotted line (which is parallel to the x-axis) from the point until the ct-axis. This “following of the dotted lines” is what we call <i>projecting onto the axis.</i></p>
+            <p>This might all seem like primary school math, I know. But, bear with me, this was a necessary little recap before diving into… tilted axes. </p>
+            
+            <img
+              src="images_explanations/Project_4.png"
+              alt="Adding a the ct'-axis of a second tilted reference frame"
+              width="300"
+              class="explanation-image"
+            >
+            <p>Suppose we add another reference frame, the target reference frame (in orange), which moves with constant velocity relative to the observer's reference frame (in blue). As you know from the MinutePhysics videos, the path or worldline of this moving frame can be represented by a slanted and stretched line. This line is the ct-axis of the second frame of reference. By convention, we call this the “primed axis” (ct’-axis). </p>
+
+            <img
+              src="images_explanations/Project_5.png"
+              alt="Adding the x'-axis of the second tilted reference frame and the angles"
+              width="300"
+              class="explanation-image"
+            >
+            <p>This primed ct-axis has a particular angle relative to the unprimed ct-axis. The primed x-axis is built with the same angle relative to the unprimed x-axis. </p>
+
+            <img
+              src="images_explanations/Project_6.png"
+              alt="The straight projections onto the first reference frame"
+              width="300"
+              class="explanation-image"
+            >
+            <p>Reading the spacetime coordinates of the event in the observer's frame (in blue) doesn’t change; you still follow the vertical and horizontal dotted lines to project onto the axes, ending up with (3, 2). </p>
+
+            <img
+              src="images_explanations/Project_7.png"
+              alt="The slanted projections onto the second reference frame"
+              width="300"
+              class="explanation-image"
+            >
+            <p>However, things change a little bit when we want to read the time and space at which the event happened for the orange target frame. Remember that we had to draw our dotted lines parallel to the axes when we did projections? Here, the axes are tilted, but the same logic applies: to read the value on the ct’-axis, we have to follow a dotted line that is parallel to the x’-axis and vice versa. This way, we will find different values for the time and place of this dark blue event depending on the reference frame we look at! </p>
+            <p>Moreover, look at the spacing between the blue tick marks versus between the orange ones… Do you notice that the orange ones are further away from each other? The fabric of space-time literally stretches when you see the world from a moving perspective. </p>
+            <p>The important thing to remember here is that the dotted line that projects the event onto the axis you want to read the information from must always be parallel to the other axis of the same frame. The dotted lines basically mean “as seen by [insert chosen frame of reference]”. Here, our event happens at (3, 2) in the blue reference frame, but at around (2.5, 0.5) in the orange reference frame. </p>
+            <p>This is how we read space-time diagrams: these values are… relative! </p>
+            <p>Make sure you properly understand how to do these kinds of projections before diving into more complex situations </p>
+            <p>You might have noticed, in the interactive spacetime globe above, that the tick marks of a tilted reference frame are slightly slanted. The slope of these ticks corresponds to the slope of the x’-axis. To project an event onto a ct-axis of a specific reference frame, you would have to draw a line from the event to the ct-axis of that frame, parallel to the tickmarks on this axis, as shown below. </p>
+
+            <img
+              src="images_explanations/Project_8.png"
+              alt="The slanted projections onto the second reference frame in the spacetime globe"
+              width="748"
               class="explanation-image"
             >
 
-            <p> To read the x (or space) -coordinate of the event on this diagram, you have to follow the vertical dotted line (which is parallel to the ct-axis) from the point until the x-axis. To find the ct (or time?)-coordinate, you have to follow the horizontal dotted line (which is parallel to the x-axis) from the point until the ct-axis. This “following of the dotted lines” is what we call projecting onto the axis. </p>
-
+            <p>But really, there’s no need to do this! Our code does this for you as you adjust the slider to transition to the target reference frame. You can then read the coordinates as normal. </p> 
             <img
-              src="NAME.png"
-              alt="TITLE"
-              class="explanation-image"
-            >
-            <p> This might all seem like primary school math, I know. But, bear with me, this was a necessary little recap before diving into… tilted axes. </p>
-            <p> Suppose we add another reference frame, the target reference frame (in orange), which moves with constant velocity relative to the observer's reference frame (in blue). As you know from the MinutePhysics videos, the path or worldline of this moving frame can be represented by a slanted and stretched line. This line is the ct-axis of the second frame of reference. By convention, we call this the “primed axis” (ct’-axis). </p>
-
-            <img
-              src="NAME.png"
-              alt="TITLE"
-              class="explanation-image"
-            >
-            <p> This primed ct-axis has a particular angle relative to the unprimed ct-axis. The primed x-axis is built with the same angle relative to the unprimed x-axis. </p>
-
-            <img
-              src="NAME.png"
-              alt="TITLE"
-              class="explanation-image"
-            >
-            <p> Reading the spacetime coordinates of the event in the observer's frame (in blue) doesn’t change; you still follow the vertical and horizontal dotted lines to project onto the axes, ending up with (3, 2). </p>
-   
-            <img
-              src="NAME.png"
-              alt="TITLE"
-              class="explanation-image"
-            >
-
-            <p> HOWEVER, things change a little bit when we want to read the time and space at which the event happened for the orange target frame. Remember that we had to draw our dotted lines parallel to the axes when we did projections? Here, the axes are tilted, but the same logic applies: to read the value on the ct’-axis, we have to follow a dotted line that is parallel to the x’-axis and vice versa. This way, we will find different values for the time and place of this dark blue event depending on the reference frame we look at! </p>
-            <p> Moreover, look at the spacing between the blue tick marks versus between the orange ones… Do you notice that the orange ones are further away from each other? The fabric of space-time literally stretches when you see the world from a moving perspective. </p>
-
-            <img
-              src="NAME.png"
-              alt="TITLE"
-              class="explanation-image"
-            >
-
-            <p> The important thing to remember here is that the dotted line that projects the event onto the axis you want to read the information from must always be parallel to the other axis of the same frame. The dotted lines basically mean “as seen by [insert chosen frame of reference]”. Here, our event happens at (3, 2) in the blue reference frame, but at around (2.5, 0.5) in the orange reference frame. </p>
-            <p> This is how we read space-time diagrams: these values are… relative! </p>
-            <p> Make sure you properly understand how to do these kinds of projections before diving into more complex situations </p>
-            <p> You might have noticed, in the interactive spacetime globe above, that the tick marks of a tilted reference frame are slightly slanted. The slope of these ticks corresponds to the slope of the x’-axis. To project an event onto a ct-axis of a specific reference frame, you would have to draw a line from the event to the ct-axis of that frame, parallel to the tickmarks on this axis, as shown below. </p>
-
-            <img
-              src="NAME.png"
-              alt="TITLE"
-              class="explanation-image"
-            >
-
-            <p> But really, there’s no need to do this! Our code does this for you as you adjust the slider to transition to the target reference frame. You can then read the coordinates as normal. </p> 
-            <img
-              src="NAME.png"
-              alt="TITLE"
+              src="images_explanations/Project_9.png"
+              alt="The straight projections onto the first reference frame in the spacetime globe"
+              width="748"
               class="explanation-image"
             >
 
@@ -307,95 +348,167 @@ Additional options allow the event’s light cones (please refer to the light co
 
 <!-- Lightcone Tab -->
           <div class="explanations-tab" id="exp-lightcones">
-            <p> It is a common misconception to think that light and its properties cause Special Relativistic effects. But really, Special Relativity doesn’t depend on the properties of light at all. Using Newton's laws of physics and the principle of relativity, it is possible to mathematically prove that there must exist one maximum speed in nature that doesn’t change depending on your reference frame. Experimental evidence shows that this maximum and invariant speed is exactly 299,792,458 m/s: the speed of light! :) So the invariance of the speed of light follows from the Principle of Relativity, which describes how our Universe fundamentally works, rather than the other way around. </p>
-            <p> As explained in the MinutePhysics videos, space-time diagrams are designed so that one vertical tick on the ct-axis corresponds to 1 second, and one horizontal tick on the x-axis corresponds to the distance light travels in 1 second. This way, the speed of light can be visualised by a line with a 45-degree slope starting at the centre and extending in both spatial directions. </p>
-            <p> Imagine you stand in the centre of the diagram (at rest relative to the reference frame) with a light bulb, and you turn it on for one millisecond. The diagram below shows the worldlines of light rays emitted in both directions from your light bulb at time = 0. This V shape, which is created by the two worldlines of light, is what we call a future light cone. Following these lines, you can then see that these rays of light will reach x = 2 and x = -2 at ct = 2, etc. </p>
-
+            <h2>Speed of light, Light cones and Causality </h2> 
+            
+            <p>It is a common misconception to think that light and its properties cause Special Relativistic effects. But really, Special Relativity doesn’t depend on the properties of light at all. Using Newton's laws of physics and the principle of relativity, it is possible to mathematically prove that there must exist one maximum speed in nature that doesn’t change depending on your reference frame. Experimental evidence shows that this maximum and invariant speed is exactly 299,792,458 m/s: the speed of light! :) So the invariance of the speed of light follows from the Principle of Relativity, which describes how our Universe fundamentally works, rather than the other way around. </p>
+            <p>As explained in the MinutePhysics videos, space-time diagrams are designed so that one vertical tick on the ct-axis corresponds to 1 second, and one horizontal tick on the x-axis corresponds to the distance light travels in 1 second. This way, the speed of light can be visualised by a line with a 45-degree slope starting at the centre and extending in both spatial directions. </p>
+            
             <img
-              src="NAME.png"
-              alt="TITLE"
+              src="images_explanations/Light_1.png"
+              alt="A light bulb in the center of the spacetime globe"
+              width="748"
               class="explanation-image"
             > 
-
-            <p> Now, let’s say that we are on Earth, which is in the middle of the diagram and at rest relative to the observer frame. Earth’s worldline is thus the vertical blue line. </p>
-  
+            <p>Imagine you stand in the centre of the diagram (at rest relative to the reference frame) with a light bulb, and you turn it on for one millisecond. The diagram below shows the worldlines of light rays emitted in both directions from your light bulb at time = 0. This V shape, which is created by the two worldlines of light, is what we call a future light cone. Following these lines, you can then see that these rays of light will reach x = 2 and x = -2 at ct = 2, etc. </p>
+            
             <img
-              src= "NAME.png"
-              alt="TITLE"
+              src= "images_explanations/Light_2.png"
+              alt="Earth in the center of the spacetime globe"
+              width="748"
               class="explanation-image"
             >
-
-            <p> Let’s then imagine that a star, which is at rest relative to Earth, explodes 10 light-years away from Earth. The star has its own vertical worldline in yellow. The light emitted by the explosion needs time to travel from the star to Earth. This is why we don’t see the star exploding exactly when it happens, but after a time delay. </p>
+            <p>Now, let’s say that we are on Earth, which is in the middle of the diagram and at rest relative to the observer frame. Earth’s worldline is thus the vertical blue line. </p>
 
             <img
-              src="NAME.png"
-              alt="TITLE"
+              src="images_explanations/Light_3.png"
+              alt="Adding explosding star in the past"
+              width="748"
               class="explanation-image"
             >
+            <p>Let’s then imagine that a star, which is at rest relative to Earth, explodes 10 light-years away from Earth. The star has its own vertical worldline in yellow. The light emitted by the explosion needs time to travel from the star to Earth. This is why we don’t see the star exploding exactly when it happens, but after a time delay. </p>
 
-
-            <p> To visualise that in a space-time diagram, we need to plug in the event of the explosion, which happens at some time t1 as represented by the orange cross. Here, the explosion happened three years ago. We can draw the light cone representing photons coming from the exploding star and travelling through space-time. </p>
-          
             <img
-              src="NAME.png"
-              alt="TITLE"
+              src="images_explanations/Light_4.png"
+              alt="Adding light cone of the exploding star"
+              width="748"
               class="explanation-image"
             >
+            <p>To visualise that in a space-time diagram, we need to plug in the event of the explosion, which happens at some time t1 as represented by the orange cross. Here, the explosion happened three years ago. We can draw the light cone representing photons coming from the exploding star and travelling through space-time. </p>
 
-            <p> Do you notice that the left ray of photons hits Earth’s worldline at the blue cross? Let’s call that time t2. This is thus the time when the people on Earth will see the star exploding! The time difference (t1 - t2) is the time light took to go from the star to Earth. The further away the star is, the longer this time interval will be. </p>
+            <img
+              src="images_explanations/Light_5.png"
+              alt="Adding time delay bewteen the explosion and when people on Earth see it"
+              width="748"
+              class="explanation-image"
+            >
+            <p>Do you notice that the left ray of photons hits Earth’s worldline at the blue cross? Let’s call that time t2. This is thus the time when the people on Earth will see the star exploding! The time difference (t1 - t2) is the time light took to go from the star to Earth. The further away the star is, the longer this time interval will be. </p>
    
             <img
-              src="NAME.png"
-              alt="TITLE"
+              src="images_explanations/Light_6.png"
+              alt="Earth at the center of the spacetime globe with a spaceship passing by it to another galaxy"
+              width="748"
               class="explanation-image"
             >
-
-            <p> The same principle applies to moving things relative to the event. Imagine that you are now on a spaceship travelling to another galaxy at a fraction of the speed of light. The spaceship just passes by Earth at time = 0, so that Earth and the spaceship are at the coordinates (0, 0) in our diagram. The red line on the diagram below is the worldline of the spaceship. </p>
+            <p>The same principle applies to moving things relative to the event. Imagine that you are now on a spaceship travelling to another galaxy at a fraction of the speed of light. The spaceship just passes by Earth at time = 0, so that Earth and the spaceship are at the coordinates (0, 0) in our diagram. The red line on the diagram below is the worldline of the spaceship. </p>
 
             <img
-              src="NAME.png"
+              src="images_explanations/Light_7.png"
               alt="TITLE"
+              width="748"
               class="explanation-image"
             >
-
-            <p> As you can see below, the galaxy explodes at t1 for Earth, but earlier, at t1’, for you in the ship (remember how projections work). </p>
+            <p>As you can see above, the galaxy explodes at t1 for Earth, but earlier, at t1’, for you in the ship (remember how projections work). </p>
 
             <img
-              src="NAME.png"
+              src="images_explanations/Light_8.png"
               alt="TITLE"
+              width="748"
               class="explanation-image"
             >
-
-            <p> If we add the light cone of the galaxy exploding and follow it, we see it crossing Earth’s worldline at t2, but the spaceship’s worldline at t2’. In your spaceship, you thus see the galaxy exploding before anyone on Earth does. </p>
+            <p>If we add the light cone of the galaxy exploding and follow it, we see it crossing Earth’s worldline at t2, but the spaceship’s worldline at t2’. In your spaceship, you thus see the galaxy exploding before anyone on Earth does. </p>
 
             <img
-              src="NAME.png"
+              src="images_explanations/Light_9.png"
               alt="TITLE"
+              width="748"
               class="explanation-image"
             >
-
-            <p> Since nothing can go faster than light, there is no way the explosion of the galaxy may have influenced things on Earth before t2. This is why all points within the future light cone (in yellow below) can be called the “causal future”: anything in this light cone might be influenced by the explosion of the galaxy. </p>
+            <p>Since nothing can go faster than light, there is no way the explosion of the galaxy may have influenced things on Earth before t2. This is why all points within the future light cone (in yellow below) can be called the “causal future”: anything in this light cone might be influenced by the explosion of the galaxy. </p>
 
             <img
-              src="NAME.png"
+              src="images_explanations/Light_10.png"
               alt="TITLE"
+              width="748"
               class="explanation-image"
             >
-
-            <p> The past light cone encompassing the “causal past” is framed by the same 45-degree sloped lines, representing the light that reached the event. Only events within this past light cone might have influenced the explosion; any events outside of it were too far away for their light to travel to the galaxy in time to have influenced the explosion. </p>
-
-            <img
-              src="NAME.png"
-              alt="TITLE"
-              class="explanation-image"
-            >
-
+            <p>The past light cone encompassing the “causal past” is framed by the same 45-degree sloped lines, representing the light that reached the event. Only events within this past light cone might have influenced the explosion; any events outside of it were too far away for their light to travel to the galaxy in time to have influenced the explosion. </p>
+            <p>In your Special Relativity classes, you will see that events within the future or past light cone of another one are called <i>time-like<i> separated (because you just need to look at the future or the past to see that they can influence each other), while events outside of these light cones are called <i>space-like</i> separated (because they are literally too far away from the event to be influenced by it).</p>
           </div>
 
 <!-- Rhinocerons Tab -->
           <div class="explanations-tab" id="exp-rhinoceros">
-            <p>To be, or to take arms against a sea of troubles, and makes calamity of something after death, the undiscover'd country from whose ills we have, than fly to be: that is the law's delay, the insolence doth make with this regard the dreams may come when we have shuffled off this regard the law's delay, the pangs of great pith a bare bodkin? Who would bear the heart-ache and arrows of outrageous fortune, or to take arms against a sea of the law's delay, the spurns that patient merit of thought, and momen</p>
+            <h2>The Rhinoceros and the Falling Blades </h2> 
+            <p>Robespierre the Rhinoceros has a rest length of 5 meters, the length as seen in his own frame of reference. He has been challenged to pass through two sharp blades which are 4 meters apart and descend simultaneously in the frame of the ground.</p>
+            
+            <img
+              src="images_explanations/Rhino_1.png"
+              alt="TITLE"
+              width="748"
+              class="explanation-image"
+            > 
+            <p>The blades are programmed to go down when Robespierre’s tail just passes the first blade, so that the first one just misses his tail, but the other neatly cuts his horn. Is there a way for him to run through these at a fraction of the speed of light so as not to be hurt?</p>
+            <p>At first glance, this situation leads to a paradox. Depending on the frame of reference used to analyse the experiment, it may seem that Robespierre survives, while another observer might conclude that he gets hit by the blades. How can different observers disagree on the outcome of the same event?</p>
+            <p>Let’s use the spacetime globe to see how Special Relativity resolves this apparent contradiction and help Robespierre find out if he’ll get through the blades safely.</p>
 
+            <img
+              src= "images_explanations/Rhino_2.png"
+              alt="TITLE"
+              width="748"
+              class="explanation-image"
+            >
+            <p>First, look at the ground’s reference frame (in blue): the blades are at rest in this reference frame because they don’t move relative to the ground. The yellow dots on the x-axis of the diagram (E1 and E2) are the positions of the blades when Robespierre starts running (at ct = 0). You can also see their worldlines, which are parallel to the blue ct-axis. Notice that the blades are 4 meters apart in this reference frame.<p>
+            <p>To avoid overcrowding the diagram, let’s remove the drawing of the blades, but keep in mind that they will still be represented by the yellow dots and their respective worldlines in future diagrams.</p>
+            
+            <img
+              src="images_explanations/Rhino_3.png"
+              alt="TITLE"
+              width="748"
+              class="explanation-image"
+            >
+            <p>Now, let’s look at Robespierre the Rhinoceros. He runs towards the blades with a speed of 0.6c relative to the ground. The yellow dots (E3 and E4) represent the position of his tail and horn, respectively, in his tilted reference frame (in red). You can see that he is 5 meters long for the red frame. This is his proper length, the length that is measured viewed from his own reference frame.</p>
+
+            <img
+              src="images_explanations/Rhino_4.png"
+              alt="TITLE"
+              width="748"
+              class="explanation-image"
+            >
+            
+            <img
+              src="images_explanations/Rhino_5.png"
+              alt="TITLE"
+              width="748"
+              class="explanation-image"
+            >
+            
+            <img
+              src="images_explanations/Rhino_6.png"
+              alt="TITLE"
+              width="748"
+              class="explanation-image"
+            >
+            
+            <img
+              src="images_explanations/Rhino_7.png"
+              alt="TITLE"
+              width="748"
+              class="explanation-image"
+            >
+            
+            <img
+              src="images_explanations/Rhino_8.png"
+              alt="TITLE"
+              width="748"
+              class="explanation-image"
+            >
+            
+            <img
+              src="images_explanations/Rhino_9.png"
+              alt="TITLE"
+              width="748"
+              class="explanation-image"
+            >
+            
           </div>
         </div>
       </div>
@@ -405,15 +518,15 @@ Additional options allow the event’s light cones (please refer to the light co
       <div class="tab-panel" id="tab-about">
       <div class="section-content">
         <h2>About</h2>
-        <p>[TITLE] is a project built by a group of Maastricht University students who aim to make Special Relativity visualizers available online more accessible and intuitive. Our group focused on making this interactive and user-friendly platform, which is meant to be complementary to the MinutePhysics video series created by Henry Reich about Special Relativity. (https://www.youtube.com/watch?v=-NN_m2yKAAk&list=PLoaVOjvkzQtyjhV55wZcdicAz5KexgKvm&index=5 ) </p>
-        <p> In the main page diagram, you can use the buttons and the sliders to add events, light cones, worldlines, and switch between perspectives to experiment with the space-time diagram yourself and get a better understanding of the subject.  You can also choose to view some concepts and paradoxes more in-depth with our guided and pre-built explanations on the other pages.</p>
-        <p>In case you are new to Special Relativity or unfamiliar with Relativity visualisation in this type of diagram, we advise you to watch the MinutePhysics video series on Special Relativity, as they can help you to get familiar with the main Special Relativity concepts.</p>
+        <p>The Spacetime Explorer is a project built by a group of students at the Maastricht Science Porgramme who aim to make Special Relativity visualizers available online more accessible and intuitive. The group focused on making this interactive and user-friendly platform, which is meant to be complementary to the <a href="https://www.youtube.com/watch?v=-NN_m2yKAAk&list=PLoaVOjvkzQtyjhV55wZcdicAz5KexgKvm&index=5" target="_blank">MinutePhysics video series</a> created by Henry Reich about Special Relativity.</p>
+        <p> In the main page diagram, you can use the buttons and the sliders to add events, light cones, worldlines, and switch between perspectives to experiment with the space-time diagram yourself and get a better understanding of the subject.  You can also choose to view some concepts and paradoxes more in-depth with our guided and pre-built explanations in the explanation tab.</p>
+        <p> In case you are new to Special Relativity or unfamiliar with Relativity visualisation in this type of diagram, we advise you to watch the MinutePhysics video series on Special Relativity, as they can help you to get familiar with the main Special Relativity concepts.</p>
         <p> We hope you enjoy our work and take the most out of it!  </p>
-        <p>The students of MSP (Maastricht Science Program)        </p>
+        <p> The students of MSP (Maastricht Science Program)        </p>
         </div>
       </div>
       <div class="credits">
-        <div class="ack-text">paste acknowledgements</div>
+        <div class="ack-text">Designed by Laura-Jo Lykles, Joey Deliège, Margot Portier and Victoria Mansho. Project led by Laura-Jo Lykles and supervised by Panos Christakoglou at Maastricht University. Project inspired by Henry Reich's MinutePhysics videos series about Special Relativity.</div>
         </div>
       </div>
     </div>

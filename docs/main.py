@@ -598,6 +598,15 @@ def handle_projection_checkbox(event, event_number, frame):
     checkbox = event.target
 
     if checkbox.checked:
+
+        # Find corresponding x-axis checkbox
+        axis_checkbox = document.getElementById(f"x_axis_{frame.name}")
+
+        # If not already checked, check it and draw axis
+        if axis_checkbox and not axis_checkbox.checked:
+            axis_checkbox.checked = True
+            draw_x_axis(frame)
+
         draw_projection(event_number, frame)
 
     else:

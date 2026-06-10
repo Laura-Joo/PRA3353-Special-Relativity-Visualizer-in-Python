@@ -4,7 +4,7 @@
   padding: 0;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Verdana:wght@400;500;600&=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
 
 :root {
   --panel-width: 340px;
@@ -29,7 +29,7 @@
   --color-frame-c:        #2563a8;
   --color-observer:       #7c3aed;
 
-  --font-ui:              'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-ui:              'Verdana', 'Helvetica Neue', Arial, sans-serif;
   --font-mono:            'DM Mono', 'Fira Mono', monospace;
 
   --transition:           140ms ease;
@@ -47,6 +47,13 @@ body {
   min-height: 100vh;
   color-scheme: light;
 }
+
+/*  explanation images styling  */
+.explanation-image {
+    display: block;
+    margin: 15px auto;
+}
+
 
 /*  tooltip styling  */
 .tooltip-container {
@@ -548,34 +555,35 @@ button[py-click="add_event"]:hover::before {
   color: inherit;
 }
 
-
-/* explanation tabs*/
-
 /* explanation tabs */
 
 .explanations-layout {
-  position: relative;
+ position: relative
+}
+
+.explanations-area {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  align-items: flex-start;
 }
 
 .explanations-nav {
   position: absolute;
-  left: -230px;
+  left: 30px;
   top: 55px;
   width: 200px;
-  z-index: 10;
-
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
 }
 
 .explanations-nav a {
   cursor: pointer;
   display: block;
   padding: 6px 0;
-  color: black;
+  color: #06041c;
   text-decoration: none;
   pointer-events: auto;
+   white-space: normal;
+  line-height: 1.4;
 }
 
 .explanations-nav a.active {
@@ -585,9 +593,8 @@ button[py-click="add_event"]:hover::before {
 }
 
 .explanations-content {
-  width: 100%;
+ width: 100%;
 }
-
 .explanations-tab {
   display: none;
 }
@@ -815,15 +822,31 @@ button[py-click="add_event"]:hover::before {
 }
 
 .section-content {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 48px 40px 56px;
+  max-width: 850px;
+  margin: 24px auto 0 auto;
+  padding: 40px 50px;
+
+  background: #f0eee8;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+
+  text-align: justify;
+  line-height: 1.8;
+  hyphens: auto;
+
+  box-shadow:
+    0 1px 3px rgba(0,0,0,0.08),
+    0 1px 2px rgba(0,0,0,0.04);
+}
+
+.text-content {
+  max-width: 740px;
 }
 
 .section-content h2 {
   font-size: 19px;
   font-weight: 500;
-  color: var(--color-text);
+  color: #06041c;
   margin-bottom: 16px;
   letter-spacing: -0.01em;
 }
@@ -831,13 +854,15 @@ button[py-click="add_event"]:hover::before {
 .section-content p {
   font-size: 13px;
   line-height: 1.8;
-  color: var(--color-text-muted);
+  color: #06041c;
   margin-bottom: 14px;
 }
 
 .section-content p:last-child {
   margin-bottom: 0;
 }
+
+
 
 .math-block {
   font-family: var(--font-mono);
@@ -851,9 +876,7 @@ button[py-click="add_event"]:hover::before {
   color: var(--color-text);
 }
 
-
 /* acknowledgements bar */
-
 .credits {
   padding: 26px 40px;
   background: var(--color-bg);
@@ -868,4 +891,3 @@ button[py-click="add_event"]:hover::before {
   color: var(--color-text-muted);
   letter-spacing: 0.02em;
 }
-
