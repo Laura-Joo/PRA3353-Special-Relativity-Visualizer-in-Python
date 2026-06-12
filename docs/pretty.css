@@ -48,6 +48,12 @@ body {
   color-scheme: light;
 }
 
+/*  QR-code styling  */
+.QR-code {
+  display: block;
+  margin: 0 auto;
+}
+
 /*  explanation images styling  */
 .explanation-image {
     display: block;
